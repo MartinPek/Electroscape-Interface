@@ -1,0 +1,12 @@
+<div>
+
+    <!--  span class="brain_box" -->
+    {{brain.name}}
+    {% for relay in brain.associated_relays %}
+        {{relay.name}}
+    {% endfor %}
+
+    <form action="#" method="post">
+        <button type="submit" class="btn" name="cmd" value="restart {{brain.name}}">RESTART</button>
+    </form>
+</div>

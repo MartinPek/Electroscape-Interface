@@ -1,0 +1,33 @@
+h2 {
+    font-weight: bold;
+    color: #E6C846;
+}
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: rgb(30,30,30);
+    color: #E6C846;
+}
+span {
+    color: black;
+}
+
+button.red {
+    background-color: red
+}
+
+button.green {
+    background-color: green
+}
+
+span.relay_box {
+    background-color: darkgrey;
+    display: inline;
+    padding: 25px;
+    margin: 10px;
+}
+span.brain_box {
+    background-color: darkgrey;
+    display: inline;
+    padding: 25px;
+    margin: 10px;
+}

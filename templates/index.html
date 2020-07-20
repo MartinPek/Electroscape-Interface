@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    body {
+        background-image: url({{ url_for('static', filename='img/Hintergrund_Standard.jpg') }})
+    }
+</style>
+
+<head>
+    <meta charset="utf-8"/>
+    <title>STB-Pi {{ room_name }}</title>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+
+<body>
+<h2>STB-Pi-Interface {{ room_name }}</h2>
+<br>
+<div class="control_section">
+    <br><p>Overrides</p></br>
+    {% for relay in relays %}
+        {% include '_relay.html' %}
+    {% endfor %}
+</div>
+<br>
+<div class="control_section">
+    <br><p>Brains</p></br>
+    {% for brain in brains %}
+        {% include '_brain.html' %}
+    {% endfor %}
+</div>
+</body>
+</html>

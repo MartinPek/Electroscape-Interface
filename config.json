@@ -1,0 +1,23 @@
+{
+  "Room_name": "Galerie Test",
+  "Relays are Name, Active High, Auto/Manual, BrainNo (Physical stuff is Indexed from 1)": "",
+  "Relays": [
+    ["Licht R1", true, true, 1],
+    ["Kamin", true, true, 1],
+    ["UV-Licht", true, true, 1],
+    ["Licht R2", true, true, 1],
+    ["Exit", true, true, 1]
+  ],
+  "Brains": ["Keypads", "Skulpturen", "Exit"],
+  "Pins_IO": [
+    [16, 4],
+    [17, 5],
+    [18, 6],
+    [19, 13],
+    [20, 8],
+    [21, 9],
+    [22, 12],
+    [23, 11]
+  ],
+  "Master_reset": 27
+}

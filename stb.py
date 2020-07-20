@@ -82,20 +82,20 @@ class STB:
             GPIO.setmode(GPIO.BCM)
         except (RuntimeError, ModuleNotFoundError):
             print("Running without GPIOs on non Pi ENV / non RPi.GPIO installed machine")
-            self.is_rpi_env = False
+            self.settings.self.is_rpi_env = False
+            from fakeRPiGPIO import GPIO
         except OSError as e:
             print(e)
             print("sth went terribly wrong with GPIO import")
             exit()
 
-        if self.is_rpi_env:
-            for relay in self.settings.relays:
-                if relay.active_high:
-                    pud = GPIO.PUD_DOWN
-                else:
-                    pud = GPIO.PUD_UP
-                GPIO.setup(relay.input, GPIO.IN, pull_up_down=pud)
-                GPIO.setup(relay.output, GPIO.OUT, pull_up_down=pud)
+        for relay in self.settings.relays:
+            if relay.active_high:
+                pud = GPIO.PUD_DOWN
+            else:
+                pud = GPIO.PUD_UP
+            GPIO.setup(relay.input, GPIO.IN, pull_up_down=pud)
+            GPIO.setup(relay.output, GPIO.OUT, pull_up_down=pud)
 
     # reads and updates the STB and sets/mirrors states
     async def update_stb(self):

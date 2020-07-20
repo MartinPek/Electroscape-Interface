@@ -1,3 +1,4 @@
 python-dotenv
-RPi.GPIO
+# RPi.GPIO
 asyncio
+fakeRPiGPIO

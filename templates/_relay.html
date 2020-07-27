@@ -3,11 +3,11 @@
     <!-- make into a headline/div -->
     {{relay.name}}
     <select name="mode" id=relay.mode>
-        <option value="auto">auto</option>
-        <option value="manual">manual</option>
+        <option value="0">auto</option>
+        <option value="1">manual</option>
     </select>
     <span>
         <!-- https://www.w3schools.com/html/html_form_elements.asp -->
-        <button type="button" onclick="alert('Hello World!')">Status</button>
+        <button type="button" onclick="alert('Hello World!')">{{relay.name}}</button>
     </span>
 </span>

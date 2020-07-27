@@ -70,12 +70,15 @@ def updater(start_time):
     print("updated")
     while start_time + 0.5 > time():
         pass
+    counter = 0
     while True:
         stb.update_stb()
+        stb.settings.relays[0].name = str(counter)
+        counter += 1
         if stb.updated:
             print("me want update!")
-            app.route(route="/")
-            stb.updated = False
+            app.route(route="/", rule=None)
+            # stb.updated = False
         # sleep(0.05)
         sleep(5)
 

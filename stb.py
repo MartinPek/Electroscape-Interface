@@ -101,8 +101,10 @@ class STB:
 
     # reads and updates the STB and sets/mirrors states
 
-    def set_stb(self):
-        print()
+    def set_stb(self, pin, status):
+        print("set_stb")
+
+
 
     def update_stb(self):
         print("update_stb")

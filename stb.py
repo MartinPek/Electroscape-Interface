@@ -1,5 +1,4 @@
 import json
-import asyncio
 
 rpi_env = True
 
@@ -46,8 +45,9 @@ class Brain:
 
 class STB:
     def __init__(self):
+        self.updated = True
         self.settings = self.__load_stb()
-        self.__gpio_init()
+        self.GPIO = self.__gpio_init()
         print("stb init done")
         self.update_stb()
 
@@ -97,20 +97,23 @@ class STB:
             GPIO.setup(relay.input, GPIO.IN, pull_up_down=pud)
             GPIO.setup(relay.output, GPIO.OUT, pull_up_down=pud)
 
+        return GPIO
+
     # reads and updates the STB and sets/mirrors states
-    async def update_stb(self):
-        for relay in self.settings.relays:
-            print()
 
     def set_stb(self):
         print()
 
-    def __manage_relays(self):
+    def update_stb(self):
+        print("update_stb")
         for relay in self.settings.relays:
             # auto = true, manual = false
-            relay.status = GPIO.input(relay.input)
+            new_status = self.GPIO.input(relay.input)
+            if new_status != relay.status:
+                relay.status = new_status
+                self.updated = True
             if not relay.mode:
-                GPIO.output(relay.output, relay.status)
+                self.GPIO.output(relay.output, relay.status)
 
 # flask + rabbitsmq or kafka?
 

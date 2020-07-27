@@ -1,6 +1,7 @@
-# https://www.youtube.com/watch?v=_sgVt16Q4O4
+# Author Martin Pek
 
-# more examples
+# Flask examples
+# https://www.youtube.com/watch?v=_sgVt16Q4O4
 # https://github.com/greyli/flask-examples
 # https://github.com/greyli/catchat
 # https://www.tutorialspoint.com/flask/flask_environment.htm
@@ -11,8 +12,27 @@
 # basics on get and post
 # https://stackoverflow.com/questions/10434599/get-the-data-received-in-a-flask-request
 
+
+# ## doing parallel threads to update the STB data on the frontend:
+
+# Asyncio is not yet supported by flask
+# gap between 3.6 and 3.7 versions, their examples are based on the latter, may use it for future prohects
+# as it needs to be ironed out and established
+
+# socketio for JS websockets, i don't need another language... can i run socketio with a python script being called?
+
+# threading package seems the most promising, its also a fairly easy module I used before instead of asnycio
+# https://stackoverflow.com/questions/14384739/how-can-i-add-a-background-thread-to-flask
+
+# flaskappsheduler... well it let me down on jobs example out of their repo being borked already,
+# however its native to flask mby try backgroundsheduler
+# https://github.com/viniciuschiele/flask-apscheduler
+
+
 from stb import STB
 from flask import Flask, render_template, request
+from threading import Thread, Timer
+from time import time, sleep
 
 stb = STB()
 app = Flask('STB-Override')

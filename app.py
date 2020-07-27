@@ -45,6 +45,7 @@ def login():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    print("index")
     brains = stb.settings.brains
     relays = stb.settings.relays
     room_name = stb.settings.room_name
@@ -55,11 +56,37 @@ def index():
         print("post returned: {}".format(request.form))
         return render_template('index.html', brains=brains, room_name=room_name, relays=relays)
     else:
-        return "whoops"
+        return "something went wrong with the request, reload with F5"
+
+
+'''
+@app.before_first_request
+def create_stb_backend():
+    print()
+'''
+
+
+def updater(start_time):
+    print("updated")
+    while start_time + 0.5 > time():
+        pass
+    while True:
+        stb.update_stb()
+        if stb.updated:
+            print("me want update!")
+            app.route(route="/")
+            stb.updated = False
+        # sleep(0.05)
+        sleep(5)
 
 
 def main():
+    # args is a bit weird ... don't ask it, needs a terminator
+    stb_thread = Thread(target=updater, args=(time(), ))
+    stb_thread.start()
     app.run(debug=True)
+    # Thread(target=app.run).start()
 
 
-main()
+if __name__ == '__main__':
+    main()

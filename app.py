@@ -33,28 +33,45 @@ from stb import STB
 from flask import Flask, render_template, request
 from threading import Thread, Timer
 from time import time, sleep
+from flask_socketio import SocketIO, emit
+
 
 stb = STB()
 app = Flask('STB-Override')
 
+async_mode = None
+socketio = SocketIO(app, async_mode=async_mode)
+stb_thread = None
+
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
-    print()
+    return "login"
+
+@app.route('/stb_update')
+def stb_update():
+    print("update flask")
+    return redirect(url_for("/"))
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     print("index")
+    global stb_thread
+    if stb_thread is None:
+        stb_thread = socketio.start_background_task(updater)
+
     brains = stb.settings.brains
     relays = stb.settings.relays
     room_name = stb.settings.room_name
 
     if request.method == 'GET':
-        return render_template('index.html', brains=brains, room_name=room_name, relays=relays)
+        return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
+                               async_mode=socketio.async_mode)
     elif request.method == 'POST':
         print("post returned: {}".format(request.form))
-        return render_template('index.html', brains=brains, room_name=room_name, relays=relays)
+        return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
+                               async_mode=socketio.async_mode)
     else:
         return "something went wrong with the request, reload with F5"
 
@@ -66,10 +83,7 @@ def create_stb_backend():
 '''
 
 
-def updater(start_time):
-    print("updated")
-    while start_time + 0.5 > time():
-        pass
+def updater():
     counter = 0
     while True:
         stb.update_stb()
@@ -77,18 +91,21 @@ def updater(start_time):
         counter += 1
         if stb.updated:
             print("me want update!")
-            app.route(route="/", rule=None)
+            socketio.emit('relay_update', {'data': 'Connected', 'count': counter}, namespace='/test', broadcast=True)
+            # https://github.com/miguelgrinberg/Flask-SocketIO
+            # ajax or socketio or JQuery json, latter im the most familiar
+            # https://medium.com/hackervalleystudio/weekend-project-part-2-turning-flask-into-a-real-time-websocket-server-using-flask-socketio-ab6b45f1d896
+            # http://jonathansoma.com/tutorials/webapps/intro-to-flask/
+            # https://stackoverflow.com/questions/32322455/update-variables-in-a-web-page-without-reloading-it-in-a-simple-way
+            # https://stackoverflow.com/questions/52919791/refresh-json-on-flask-restful
             # stb.updated = False
         # sleep(0.05)
-        sleep(5)
+        socketio.sleep(5)
 
 
 def main():
     # args is a bit weird ... don't ask it, needs a terminator
-    stb_thread = Thread(target=updater, args=(time(), ))
-    stb_thread.start()
     app.run(debug=True)
-    # Thread(target=app.run).start()
 
 
 if __name__ == '__main__':

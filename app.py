@@ -34,6 +34,7 @@ from flask import Flask, render_template, request
 from threading import Thread, Timer
 from time import time, sleep
 from flask_socketio import SocketIO, emit
+from re import split
 
 
 stb = STB()
@@ -48,10 +49,31 @@ stb_thread = None
 def login():
     return "login"
 
-@app.route('/stb_update')
-def stb_update():
-    print("update flask")
-    return redirect(url_for("/"))
+
+@socketio.on('broadcast', namespace='/test')
+def test_message(message):
+    "@socketio braodcast receive myevent: ".format(message)
+
+
+def interpreter(immuteable):
+    form_dict = immuteable.to_dict()
+    action_dict = {
+        "relayOverride": stb.set_override,
+        "relaySetStatus": stb.set_relay
+    }
+
+    for key in form_dict.keys():
+        action, part_index = split("_", key)
+        print("action is {}".format(action))
+        # careful with the functions they values
+        # passed are all strings since it comes from jsons
+        # TODO: define how we pass stuff, this could limit us in the future
+        action_dict[action](part_index, form_dict[key], form_dict.keys())
+
+    '''
+    if action == "relayOverride":
+        stb.set_override(part_index, value)
+    '''
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -60,16 +82,21 @@ def index():
     global stb_thread
     if stb_thread is None:
         stb_thread = socketio.start_background_task(updater)
-
-    brains = stb.settings.brains
-    relays = stb.settings.relays
     room_name = stb.settings.room_name
 
     if request.method == 'GET':
+        brains = stb.brains
+        relays = stb.relays
         return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
                                async_mode=socketio.async_mode)
     elif request.method == 'POST':
         print("post returned: {}".format(request.form))
+        interpreter(request.form)
+        brains = stb.brains
+        relays = stb.relays
+        print("relay modes are: ")
+        for relay in relays:
+            print(relay.mode)
         return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
                                async_mode=socketio.async_mode)
     else:
@@ -84,28 +111,22 @@ def create_stb_backend():
 
 
 def updater():
-    counter = 0
-    while True:
-        stb.update_stb()
-        stb.settings.relays[0].name = str(counter)
-        counter += 1
-        if stb.updated:
-            print("me want update!")
-            socketio.emit('relay_update', {'data': 'Connected', 'count': counter}, namespace='/test', broadcast=True)
-            # https://github.com/miguelgrinberg/Flask-SocketIO
-            # ajax or socketio or JQuery json, latter im the most familiar
-            # https://medium.com/hackervalleystudio/weekend-project-part-2-turning-flask-into-a-real-time-websocket-server-using-flask-socketio-ab6b45f1d896
-            # http://jonathansoma.com/tutorials/webapps/intro-to-flask/
-            # https://stackoverflow.com/questions/32322455/update-variables-in-a-web-page-without-reloading-it-in-a-simple-way
-            # https://stackoverflow.com/questions/52919791/refresh-json-on-flask-restful
-            # stb.updated = False
-        # sleep(0.05)
-        socketio.sleep(5)
+    try:
+        while True:
+            # stb.update_stb()
+            if len(stb.updates) > 0:
+                print("STB has updated with {}".format(stb.updates))
+                # https://stackoverflow.com/questions/18478287/making-object-json-serializable-with-regular-encoder/18561055
+                socketio.emit('relay_update', {'updates': stb.updates}, namespace='/test', broadcast=True)
+                stb.updates = []
+            socketio.sleep(1)
+    finally:
+        stb.cleanup()
 
 
 def main():
-    # args is a bit weird ... don't ask it, needs a terminator
-    app.run(debug=True)
+    socketio.run(app, debug=True)
+    # app.run(debug=True)
 
 
 if __name__ == '__main__':

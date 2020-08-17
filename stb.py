@@ -1,36 +1,45 @@
+from random import random
 import json
+
+# TODO:
+# Test of the clean exit
 
 rpi_env = True
 
-# TODO:
-# considerations:
-# - clean exit and restart of pins!
-#     try:
-#        print("some gpio loop")
-#     finally:
-#         GPIO.cleanup() #this ensures a clean exit
+'''
+    don't ask, everything on the frontend get smeared into strings
+    bool_dict = {"true": True, "false": False}
+    bool_convert = {"True": "false", "Talse": "true"}
+'''
+bool_dict = {"on": True, "off": False}
 
 
 class Settings:
-    def __init__(self, room_name, relays, brains, master_reset):
+    def __init__(self, room_name, master_reset):
         self.room_name = room_name
-        self.relays = relays
-        self.brains = brains
         # we may need and individual reset pin for each brain at some point
         self.master_reset = master_reset
         self.is_rpi_env = True
 
 
 class Relay:
-    def __init__(self, args):
-        name, active_high, mode, brain_association, intput_pin, output_pin = args
+
+    def get_frontend_mode(self):
+        if self.mode:
+            return "true"
+        else:
+            return "false"
+
+    def __init__(self, name, active_high, mode, brain_association, intput_pin, output_pin, index):
         self.name = name
         self.active_high = active_high
         self.mode = mode
         self.brain_association = brain_association
         self.input = intput_pin
         self.output = output_pin
-        self.status = False
+        self.status = 0
+        self.index = index
+        self.mode_frontend = self.get_frontend_mode()
 
 
 class Brain:
@@ -45,11 +54,11 @@ class Brain:
 
 class STB:
     def __init__(self):
-        self.updated = True
-        self.settings = self.__load_stb()
+        self.updates = []
+        self.settings, self.relays, self.brains = self.__load_stb()
         self.GPIO = self.__gpio_init()
-        print("stb init done")
         self.update_stb()
+        print("stb init done")
 
     def __load_stb(self):
         try:
@@ -66,14 +75,14 @@ class STB:
             exit()
 
         for i, relay in enumerate(relays):
-            relay_data = relay + pins_IO[i]
-            relays[i] = Relay(relay_data)
+            relay_data = relay + pins_IO[i] + [i]
+            relays[i] = Relay(*relay_data)
 
         for i, brain in enumerate(brains):
             brains[i] = Brain(brain, relays, i)
 
-        settings = Settings(room_name, relays, brains, master_reset)
-        return settings
+        settings = Settings(room_name, master_reset)
+        return settings, relays, brains
 
     def __gpio_init(self):
         try:
@@ -89,7 +98,7 @@ class STB:
             print("sth went terribly wrong with GPIO import")
             exit()
 
-        for relay in self.settings.relays:
+        for relay in self.relays:
             if relay.active_high:
                 pud = GPIO.PUD_DOWN
             else:
@@ -99,25 +108,46 @@ class STB:
 
         return GPIO
 
+    def set_override(self, relay_index, value, test):
+        # do yourself a favour and dont pass values into html merely JS,
+        # converting bools into 3 different languages smeard into json is not fun
+        print("testval: {}".format(test))
+        relay = self.relays[int(relay_index)]
+        '''
+        try:
+            value = not bool_dict[value]
+            relay.mode = value
+        except KeyError:
+            print("KEYERROR!")
+        '''
+        relay.mode = not relay.mode
+        relay.mode_frontend = relay.get_frontend_mode()
+
+    # changes form the frontend applied to the GPIO pins
+    def set_relay(self, relay, status):
+        self.GPIO.output(relay.output, status)
+        print("GPIO has been overriden, WIP automatic logdump needs to hook in here")
+
     # reads and updates the STB and sets/mirrors states
-
-    def set_stb(self, pin, status):
-        print("set_stb")
-
-
-
     def update_stb(self):
         print("update_stb")
-        for relay in self.settings.relays:
+        print("adding some random fake updates")
+        for relay_no, relay in enumerate(self.relays):
             # auto = true, manual = false
-            new_status = self.GPIO.input(relay.input)
+            # new_status = self.GPIO.input(relay.input)
+            new_status = round(random())
             if new_status != relay.status:
                 relay.status = new_status
-                self.updated = True
-            if not relay.mode:
-                self.GPIO.output(relay.output, relay.status)
+                self.updates.append([relay_no, relay.status])
+            # this will mirror the GPIOs in Automatic mode
 
-# flask + rabbitsmq or kafka?
+            if not relay.mode:
+                print("mirroring")
+                self.GPIO.output(relay.output, relay.status)
+        print(self.updates)
+
+    def cleanup(self):
+        self.GPIO.cleanup()
 
 # https://www.shanelynn.ie/asynchronous-updates-to-a-webpage-with-flask-and-socket-io/
 # https://flask-socketio.readthedocs.io/en/latest/

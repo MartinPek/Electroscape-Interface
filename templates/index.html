@@ -10,6 +10,13 @@
 <head>
     <meta charset="utf-8"/>
     <title>STB-Pi {{ room_name }}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!-- JS code to work with socketIO -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <script src="//code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
@@ -24,12 +31,20 @@
 
             var socket = io(namespace);
 
-            socket.on('relay_update', function(relay, cb) {
-                 $('#log').append('<br>' + $('<div/>').text('Received stuff').html());
+            socket.on('relay_update', function(data, cb) {
+                var status_buttons = document.getElementsByClassName("status")
+                data.updates.forEach(function (relay_data) {
+                    console.log("relay " + relay_data[0] + " has been updated to " + relay_data[1])
+                    status_buttons[relay_data[0]].innerHTML = relay_data[1]
+                });
+
+                $('#debug_log').append('<br>' + $('<div/>').text('Received stuff').html());
                 // I wonder if i can use CB instead to just reload... for quick'n'dirty
+
                 if (cb)
                     cb();
-            });
+                });
+
         });
     </script>
 </head>
@@ -38,14 +53,25 @@
 <h2>STB-Pi-Interface {{ room_name }}</h2>
 <p>Async mode is: <b>{{ async_mode }}</b></p>
 <br>
-<div class="control_section">
+<div id="Relays"class="control_section">
     <br><p>Overrides</p></br>
     {% for relay in relays %}
         {% include '_relay.html' %}
     {% endfor %}
 </div>
 <br>
-<div class="control_section">
+<br>
+
+<!--
+<form id="leave" method="POST" action='#'>
+    <input type="text" name="leave_room" id="leave_room" placeholder="Room Name">
+    <input type="submit" value="Leave Room">
+</form>
+-->
+
+<br>
+<br>
+<div id="Brains" class="control_section">
     <br><p>Brains</p></br>
     {% for brain in brains %}
         {% include '_brain.html' %}
@@ -56,7 +82,7 @@
  <h2>Receive:</h2>
 <br>
 <br>
-<div id="log">This is the log</div>
+<div id="debug_log">This is the debug_log</div>
 
 </body>
 </html>

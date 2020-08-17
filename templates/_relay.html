@@ -1,13 +1,42 @@
-<span class="relay_box">
+<div class="relay_box">
 
-    <!-- make into a headline/div -->
+    <!-- make into a headline/div
+    -->
     {{relay.name}}
-    <select name="mode" id=relay.mode>
-        <option value="0">auto</option>
-        <option value="1">manual</option>
-    </select>
-    <span>
-        <!-- https://www.w3schools.com/html/html_form_elements.asp -->
-        <button type="button" onclick="alert('Hello World!')">{{relay.name}}</button>
-    </span>
-</span>
+
+        <form id="broadcast" method="POST" action="">
+            <input type="checkbox"
+                   id="relay_{{relay.index}}_override"
+                   name="relayOverride_{{relay.index}}"
+                   onClick="this.form.submit();">
+            <input type="hidden"
+                   id="relayOverride_{{relay.index}}_hidden"
+                   name="relayOverride_{{relay.index}}">
+
+        </form>
+
+    <script>
+        // update the checkbox values, who thought mixing a bunch of languages is fun
+        var box = document.getElementById("relay_{{relay.index}}_override");
+        console.log("value of relay is: " + {{relay.mode_frontend}});
+        box.checked = {{relay.mode_frontend}};
+        console.log(box.checked);
+    </script>
+
+
+
+
+        <!--
+        <select name="mode" class=relay.mode form="leave">
+            <option value="0">auto</option>
+            <option value="1">manual</option>
+        </select>
+        -->
+    <form id="broadcast_relay_status" method="POST" action="">
+        <span>
+                <!-- https://www.w3schools.com/html/html_form_elements.asp -->
+            <button class="status" type="button" name="relaySetStatus_{{relay.index}}"
+                    onclick="this.form.submit();">{{relay.status}}</button>
+        </span>
+    </form>
+</div>

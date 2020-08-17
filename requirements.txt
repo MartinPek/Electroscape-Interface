@@ -1,4 +1,4 @@
 python-dotenv
 # RPi.GPIO
-asyncio
 fakeRPiGPIO
+flask_socketio

@@ -5,6 +5,7 @@ web_stb_override
 - it will run without GPIOs or emulator
 
 ## notes
+- checkboxes do submit an empty dict when set on true
 - UWSGI.ini with enable-threads = true is crucial to get threading running, 
     glad you found out now bec have fun finding that information
 - FLASK_ENV=development flask run

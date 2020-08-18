@@ -4,13 +4,13 @@
     -->
     {{relay.name}}
 
-        <form id="broadcast" method="POST" action="">
+        <form id="switch_override" method="POST" action="">
             <input type="checkbox"
                    id="relay_{{relay.index}}_override"
                    name="relayOverride_{{relay.index}}"
                    onClick="this.form.submit();">
             <input type="hidden"
-                   id="relayOverride_{{relay.index}}_hidden"
+                   id="relay_{{relay.index}}_override_hidden"
                    name="relayOverride_{{relay.index}}">
 
         </form>
@@ -32,11 +32,28 @@
             <option value="1">manual</option>
         </select>
         -->
-    <form id="broadcast_relay_status" method="POST" action="">
+    <script>
+        function override_check(form, mode) {
+            console.log("override_check")
+            console.log("relay mode is: " + mode)
+            if (mode) {
+                form.form.submit();
+            } else {
+                alert("Enable the override before setting the status")
+            }
+
+        }
+        // "this.form.submit();"
+    </script>
+
+
+    <form id="switch_relay" method="POST" action="">
         <span>
-                <!-- https://www.w3schools.com/html/html_form_elements.asp -->
-            <button class="status" type="button" name="relaySetStatus_{{relay.index}}"
-                    onclick="this.form.submit();">{{relay.status}}</button>
+            <button class="status" type="button"
+                    name="relaySetStatus_{{relay.index}}"
+                    onClick="override_check(this, {{relay.mode_frontend}})"
+            >{{relay.status}}</button>
+            <input type="hidden" name="relaySetStatus_{{relay.index}}">
         </span>
     </form>
 </div>

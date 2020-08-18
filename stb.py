@@ -37,7 +37,7 @@ class Relay:
         self.brain_association = brain_association
         self.input = intput_pin
         self.output = output_pin
-        self.status = 0
+        self.status = False
         self.index = index
         self.mode_frontend = self.get_frontend_mode()
 
@@ -124,9 +124,11 @@ class STB:
         relay.mode_frontend = relay.get_frontend_mode()
 
     # changes form the frontend applied to the GPIO pins
-    def set_relay(self, relay, status):
-        self.GPIO.output(relay.output, status)
-        print("GPIO has been overriden, WIP automatic logdump needs to hook in here")
+    def set_relay(self, part_index, status=False, test=False):
+        print("set_relay vars {} {} {}".format(part_index, status, test))
+        relay = self.relays[part_index]
+        relay.status = not relay.status
+        self.GPIO.output(relay.output, relay.status)
 
     # reads and updates the STB and sets/mirrors states
     def update_stb(self):

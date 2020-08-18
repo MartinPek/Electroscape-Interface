@@ -1,17 +1,13 @@
 # Author Martin Pek
 
 # Flask examples
-# https://www.youtube.com/watch?v=_sgVt16Q4O4
 # https://github.com/greyli/flask-examples
-# https://github.com/greyli/catchat
 # https://www.tutorialspoint.com/flask/flask_environment.htm
 # https://html.developreference.com/article/12618302/CSS+Background+Images+with+Flask
 
-# basics on post and get...
 
 # basics on get and post
 # https://stackoverflow.com/questions/10434599/get-the-data-received-in-a-flask-request
-
 
 # ## doing parallel threads to update the STB data on the frontend:
 
@@ -27,6 +23,14 @@
 # flaskappsheduler... well it let me down on jobs example out of their repo being borked already,
 # however its native to flask mby try backgroundsheduler
 # https://github.com/viniciuschiele/flask-apscheduler
+
+'''
+TODO:
+- Verify double post of hidden elements is not causing problems?
+post returned: ImmutableMultiDict([('relayOverride_0', 'on'), ('relayOverride_0', '')])
+- rename set_relay ad set_override to flip? maybe differentiation here with another func?
+
+'''
 
 
 from stb import STB
@@ -64,6 +68,7 @@ def interpreter(immuteable):
 
     for key in form_dict.keys():
         action, part_index = split("_", key)
+        part_index = int(part_index)
         print("action is {}".format(action))
         # careful with the functions they values
         # passed are all strings since it comes from jsons
@@ -94,9 +99,6 @@ def index():
         interpreter(request.form)
         brains = stb.brains
         relays = stb.relays
-        print("relay modes are: ")
-        for relay in relays:
-            print(relay.mode)
         return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
                                async_mode=socketio.async_mode)
     else:

@@ -1,9 +1,9 @@
-<div class="relay_box">
+<td>
 
     <!-- make into a headline/div
     -->
-    {{relay.name}}
-
+    <p>{{relay.name}}</p>
+    <span>
         <form id="switch_override" method="POST" action="">
             <input type="checkbox"
                    id="relay_{{relay.index}}_override"
@@ -12,8 +12,9 @@
             <input type="hidden"
                    id="relay_{{relay.index}}_override_hidden"
                    name="relayOverride_{{relay.index}}">
-
         </form>
+    </span>
+
 
     <script>
         // update the checkbox values, who thought mixing a bunch of languages is fun
@@ -45,15 +46,15 @@
         }
         // "this.form.submit();"
     </script>
-
-
-    <form id="switch_relay" method="POST" action="">
-        <span>
+    <span>
+        <form id="switch_relay" method="POST" action="">
             <button class="status" type="button"
-                    name="relaySetStatus_{{relay.index}}"
-                    onClick="override_check(this, {{relay.mode_frontend}})"
+                name="relaySetStatus_{{relay.index}}"
+                onClick="override_check(this, {{relay.mode_frontend}})"
             >{{relay.status_frontend}}</button>
-            <input type="hidden" name="relaySetStatus_{{relay.index}}">
-        </span>
-    </form>
-</div>
+        <input type="hidden" name="relaySetStatus_{{relay.index}}">
+        </form>
+    </span>
+
+
+<td/>

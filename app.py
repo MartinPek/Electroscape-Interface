@@ -127,7 +127,7 @@ def updater():
 
 
 def main():
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=False)
     # app.run(debug=True)
 
 

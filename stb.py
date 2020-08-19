@@ -24,22 +24,38 @@ class Settings:
 
 class Relay:
 
-    def get_frontend_mode(self):
+    def __set_frontend_mode(self):
         if self.mode:
-            return "true"
+            self.mode_frontend = "true"
         else:
-            return "false"
+            self.mode_frontend = "false"
+
+    def set_mode(self, mode):
+        self.mode = mode
+        self.__set_frontend_mode()
+
+    def __set_frontend_status(self):
+        if self.status:
+            self.status_frontend = "On"
+        else:
+            self.status_frontend = "Off"
+
+    def set_status(self, status):
+        self.status = status
+        self.__set_frontend_status()
 
     def __init__(self, name, active_high, mode, brain_association, intput_pin, output_pin, index):
         self.name = name
         self.active_high = active_high
         self.mode = mode
+        self.mode_frontend = "true"
+        self.set_mode(self.mode)
         self.brain_association = brain_association
         self.input = intput_pin
         self.output = output_pin
         self.status = False
+        self.set_status(self.status)
         self.index = index
-        self.mode_frontend = self.get_frontend_mode()
 
 
 class Brain:
@@ -120,14 +136,17 @@ class STB:
         except KeyError:
             print("KEYERROR!")
         '''
-        relay.mode = not relay.mode
-        relay.mode_frontend = relay.get_frontend_mode()
+        relay.set_mode(not relay.mode)
 
     # changes form the frontend applied to the GPIO pins
-    def set_relay(self, part_index, status=False, test=False):
+    def set_relay(self, part_index, status=None, test=None):
         print("set_relay vars {} {} {}".format(part_index, status, test))
         relay = self.relays[part_index]
-        relay.status = not relay.status
+        # if we pass nothing we flip the relay
+        if status is None or type(status) is not bool:
+            status = not relay.status
+        print("setting relay {} to status {}".format(part_index, status))
+        relay.set_status(status)
         self.GPIO.output(relay.output, relay.status)
 
     # reads and updates the STB and sets/mirrors states

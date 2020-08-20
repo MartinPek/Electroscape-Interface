@@ -115,13 +115,13 @@ def create_stb_backend():
 def updater():
     try:
         while True:
-            # stb.update_stb()
+            stb.update_stb()
             if len(stb.updates) > 0:
                 print("STB has updated with {}".format(stb.updates))
                 # https://stackoverflow.com/questions/18478287/making-object-json-serializable-with-regular-encoder/18561055
                 socketio.emit('relay_update', {'updates': stb.updates}, namespace='/test', broadcast=True)
                 stb.updates = []
-            socketio.sleep(1)
+            socketio.sleep(5)
     finally:
         stb.cleanup()
 

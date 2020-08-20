@@ -24,17 +24,20 @@ class Settings:
 
 class Relay:
 
-    def __set_frontend_mode(self):
-        if self.mode:
-            self.mode_frontend = "true"
+    def __set_frontend_auto(self):
+        # since the label is Auto for the checkbox its reverse
+        if self.auto:
+            self.auto_frontend = "true"
         else:
-            self.mode_frontend = "false"
+            self.auto_frontend = "false"
 
-    def set_mode(self, mode):
-        self.mode = mode
-        self.__set_frontend_mode()
+    def set_auto(self, auto):
+        self.auto = auto
+        self.__set_frontend_auto()
 
     def __set_frontend_status(self):
+        print(self)
+        print("setting status for frontend for relay {}".format(self.name))
         if self.status:
             self.status_frontend = "On"
         else:
@@ -44,12 +47,12 @@ class Relay:
         self.status = status
         self.__set_frontend_status()
 
-    def __init__(self, name, active_high, mode, brain_association, intput_pin, output_pin, index):
+    def __init__(self, name, active_high, auto, brain_association, intput_pin, output_pin, index):
         self.name = name
         self.active_high = active_high
-        self.mode = mode
-        self.mode_frontend = "true"
-        self.set_mode(self.mode)
+        self.auto = auto
+        self.auto_frontend = "true"
+        self.set_auto(self.auto)
         self.brain_association = brain_association
         self.input = intput_pin
         self.output = output_pin
@@ -132,11 +135,11 @@ class STB:
         '''
         try:
             value = not bool_dict[value]
-            relay.mode = value
+            relay.auto = value
         except KeyError:
             print("KEYERROR!")
         '''
-        relay.set_mode(not relay.mode)
+        relay.set_auto(not relay.auto)
 
     # changes form the frontend applied to the GPIO pins
     def set_relay(self, part_index, status=None, test=None):
@@ -155,16 +158,18 @@ class STB:
         print("adding some random fake updates")
         for relay_no, relay in enumerate(self.relays):
             # auto = true, manual = false
-            # new_status = self.GPIO.input(relay.input)
-            new_status = round(random())
-            if new_status != relay.status:
-                relay.status = new_status
-                self.updates.append([relay_no, relay.status])
+            if relay.auto:
+                # new_status = bool(self.GPIO.input(relay.input))
+                new_status = bool(round(random()))
+                print("mirroring relay {}".format(relay.index))
+                self.GPIO.output(relay.output, relay.status)
+
+                if new_status != relay.status:
+                    relay.set_status(new_status)
+                    self.updates.append([relay_no, relay.status_frontend])
             # this will mirror the GPIOs in Automatic mode
 
-            if not relay.mode:
-                print("mirroring")
-                self.GPIO.output(relay.output, relay.status)
+
         print(self.updates)
 
     def cleanup(self):

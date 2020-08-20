@@ -1,6 +1,6 @@
 {
   "Room_name": "Galerie Test",
-  "Relays are Name, Active High, Auto/Manual, BrainNo (Physical stuff is Indexed from 1)": "",
+  "Relays are Name, Active High, Auto, BrainNo (Physical stuff is Indexed from 1)": "",
   "Relays": [
     ["Licht R1", true, true, 1],
     ["Kamin", true, true, 1],

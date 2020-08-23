@@ -26,6 +26,7 @@
 
 '''
 TODO:
+- Log for GM shall be one log for all brains, simply add a tag of the affected relays from the given broadcasting brain
 - Verify double post of hidden elements is not causing problems?
 post returned: ImmutableMultiDict([('relayOverride_0', 'on'), ('relayOverride_0', '')])
 - rename set_relay ad set_override to flip? maybe differentiation here with another func?
@@ -117,11 +118,14 @@ def updater():
         while True:
             stb.update_stb()
             if len(stb.updates) > 0:
-                print("STB has updated with {}".format(stb.updates))
+                print("STB relays have updated with {}".format(stb.updates))
                 # https://stackoverflow.com/questions/18478287/making-object-json-serializable-with-regular-encoder/18561055
                 socketio.emit('relay_update', {'updates': stb.updates}, namespace='/test', broadcast=True)
                 stb.updates = []
-            socketio.sleep(5)
+            if len(stb.serial_buffer) > 0:
+                socketio.emit('serial_update', {'lines': stb.serial_buffer}, namespace='/test', broadcast=True)
+                stb.serial_buffer = []
+            socketio.sleep(0.1)
     finally:
         stb.cleanup()
 

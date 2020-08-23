@@ -19,7 +19,7 @@ button.green {
     background-color: green
 }
 
-span.relay_box {
+div.relay_box {
     background-color: darkgrey;
     display: inline;
     padding: 25px;
@@ -30,4 +30,10 @@ span.brain_box {
     display: inline;
     padding: 25px;
     margin: 10px;
+}
+
+#serial_log {
+    width: 1300px;
+    height: 300px;
+    overflow: auto;
 }

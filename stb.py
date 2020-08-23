@@ -1,5 +1,6 @@
 from random import random
 import json
+from datetime import datetime as dt
 
 # TODO:
 # Test of the clean exit
@@ -74,6 +75,7 @@ class Brain:
 class STB:
     def __init__(self):
         self.updates = []
+        self.serial_buffer = []
         self.settings, self.relays, self.brains = self.__load_stb()
         self.GPIO = self.__gpio_init()
         self.update_stb()
@@ -156,6 +158,7 @@ class STB:
     def update_stb(self):
         print("update_stb")
         print("adding some random fake updates")
+        
         for relay_no, relay in enumerate(self.relays):
             # auto = true, manual = false
             if relay.auto:
@@ -167,12 +170,14 @@ class STB:
                 if new_status != relay.status:
                     relay.set_status(new_status)
                     self.updates.append([relay_no, relay.status_frontend])
-            # this will mirror the GPIOs in Automatic mode
+
+        self.serial_buffer.append(str(dt.now()) + "empty space empty spaceempty spaceempty spaceempty spaceempty spaceempty spaceempty spaceempty spaceempty spaceempty space end")
+        self.serial_buffer.append(str(dt.now()))
 
 
-        print(self.updates)
 
-    def cleanup(self):
+
+def cleanup(self):
         self.GPIO.cleanup()
 
 # https://www.shanelynn.ie/asynchronous-updates-to-a-webpage-with-flask-and-socket-io/

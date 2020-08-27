@@ -26,6 +26,7 @@
 
 '''
 TODO:
+- Serial msgs need to be stored on the backend aswell
 - Log for GM shall be one log for all brains, simply add a tag of the affected relays from the given broadcasting brain
 - Verify double post of hidden elements is not causing problems?
 post returned: ImmutableMultiDict([('relayOverride_0', 'on'), ('relayOverride_0', '')])
@@ -84,7 +85,6 @@ def interpreter(immuteable):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    print("index")
     global stb_thread
     if stb_thread is None:
         stb_thread = socketio.start_background_task(updater)
@@ -94,23 +94,18 @@ def index():
         brains = stb.brains
         relays = stb.relays
         return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
-                               async_mode=socketio.async_mode)
+                               async_mode=socketio.async_mode,
+                               serial_limit = stb.settings.serial_limit)
     elif request.method == 'POST':
         print("post returned: {}".format(request.form))
         interpreter(request.form)
         brains = stb.brains
         relays = stb.relays
         return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
-                               async_mode=socketio.async_mode)
+                               async_mode=socketio.async_mode,
+                               serial_limit=stb.settings.serial_limit)
     else:
         return "something went wrong with the request, reload with F5"
-
-
-'''
-@app.before_first_request
-def create_stb_backend():
-    print()
-'''
 
 
 def updater():

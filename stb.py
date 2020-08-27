@@ -16,11 +16,12 @@ bool_dict = {"on": True, "off": False}
 
 
 class Settings:
-    def __init__(self, room_name, master_reset):
+    def __init__(self, room_name, master_reset, serial_limit):
         self.room_name = room_name
         # we may need and individual reset pin for each brain at some point
         self.master_reset = master_reset
         self.is_rpi_env = True
+        self.serial_limit = serial_limit
 
 
 class Relay:
@@ -90,6 +91,7 @@ class STB:
                 brains = cfg["Brains"]
                 pins_IO = cfg["Pins_IO"]
                 master_reset = cfg["Master_reset"]
+                serial_limit = cfg["Serial_line_limit"]
         except ValueError as e:
             print('failure to read config.json')
             print(e)
@@ -102,7 +104,7 @@ class STB:
         for i, brain in enumerate(brains):
             brains[i] = Brain(brain, relays, i)
 
-        settings = Settings(room_name, master_reset)
+        settings = Settings(room_name, master_reset, serial_limit)
         return settings, relays, brains
 
     def __gpio_init(self):
@@ -171,8 +173,8 @@ class STB:
                     relay.set_status(new_status)
                     self.updates.append([relay_no, relay.status_frontend])
 
-        self.serial_buffer.append(str(dt.now()) + "empty space empty spaceempty spaceempty spaceempty spaceempty spaceempty spaceempty spaceempty spaceempty spaceempty space end")
-        self.serial_buffer.append(str(dt.now()))
+        self.serial_buffer.append(str(dt.now()) + "empty space empty saceempty spaceempty spaceempty spaceempty space end <br/>")
+        self.serial_buffer.append(str(dt.now()) + "<br/>")
 
 
 

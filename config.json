@@ -19,5 +19,6 @@
     [22, 12],
     [23, 11]
   ],
-  "Master_reset": 27
+  "Master_reset": 27,
+  "Serial_line_limit": 100
 }

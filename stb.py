@@ -76,7 +76,8 @@ class Brain:
 class STB:
     def __init__(self):
         self.updates = []
-        self.serial_buffer = []
+        self.serial_buffer = ["testing so", "testing so", "testing so","testing so","testing so"]
+        self.serial_updates = []
         self.settings, self.relays, self.brains = self.__load_stb()
         self.GPIO = self.__gpio_init()
         self.update_stb()
@@ -173,14 +174,16 @@ class STB:
                     relay.set_status(new_status)
                     self.updates.append([relay_no, relay.status_frontend])
 
-        self.serial_buffer.append(str(dt.now()) + "empty space empty saceempty spaceempty spaceempty spaceempty space end <br/>")
-        self.serial_buffer.append(str(dt.now()) + "<br/>")
-
-
+        self.serial_updates.insert(0, str(dt.now()) + "empty space empty saceempty spaceempty spaceempty spaceempty space end \n")
+        self.serial_updates.insert(0, str(dt.now()) + "\n")
+        # todo: here needs to be a for loop for the lines in the buffer
+        # self.serial_buffer.insert(0, self.serial_updates)
+        new_size = min(len(self.serial_buffer), self.settings.serial_limit)
+        self.serial_buffer = self.serial_buffer[:new_size]
 
 
 def cleanup(self):
-        self.GPIO.cleanup()
+    self.GPIO.cleanup()
 
 # https://www.shanelynn.ie/asynchronous-updates-to-a-webpage-with-flask-and-socket-io/
 # https://flask-socketio.readthedocs.io/en/latest/

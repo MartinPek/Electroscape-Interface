@@ -28,8 +28,9 @@
             // physical channel. If you don't care about multiple channels, you
             // can set the namespace to an empty string.
             namespace = '/test';
-
             var socket = io(namespace);
+
+            socket.emit('serial_buffer_request');
 
             socket.on('relay_update', function(data, cb) {
                 var status_buttons = document.getElementsByClassName("status")
@@ -96,9 +97,17 @@
 </div>
 
 <br>
- <h2>Brain activity</h2>
+    <h2>Brain activity</h2>
 <br>
 <div id="serial_log"></div>
+
+<!--
+<script>
+    $('#serial_log').text("fuck this")
+    console.log( {{serial_buffer}} )
+</script>
+-->
+
 <br>
 <br>
  <h2>Debug: </h2>

@@ -53,12 +53,14 @@ stb_thread = None
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
-    return "login"
+    return render_template('login.html')
 
 
-@socketio.on('broadcast', namespace='/test')
-def test_message(message):
-    "@socketio braodcast receive myevent: ".format(message)
+@socketio.on('serial_buffer_request', namespace='/test')
+def serial_buffer_request():
+    print("sending back to the req")
+    for line in stb.serial_buffer:
+        emit('serial_update', {'lines': line}, namespace='/test')
 
 
 def interpreter(immuteable):
@@ -95,7 +97,7 @@ def index():
         relays = stb.relays
         return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
                                async_mode=socketio.async_mode,
-                               serial_limit = stb.settings.serial_limit)
+                               serial_limit=stb.settings.serial_limit)
     elif request.method == 'POST':
         print("post returned: {}".format(request.form))
         interpreter(request.form)
@@ -117,10 +119,10 @@ def updater():
                 # https://stackoverflow.com/questions/18478287/making-object-json-serializable-with-regular-encoder/18561055
                 socketio.emit('relay_update', {'updates': stb.updates}, namespace='/test', broadcast=True)
                 stb.updates = []
-            if len(stb.serial_buffer) > 0:
-                socketio.emit('serial_update', {'lines': stb.serial_buffer}, namespace='/test', broadcast=True)
-                stb.serial_buffer = []
-            socketio.sleep(0.1)
+            if len(stb.serial_updates) > 0:
+                socketio.emit('serial_update', {'lines': stb.serial_updates}, namespace='/test', broadcast=True)
+                stb.serial_updates = []
+            socketio.sleep(1)
     finally:
         stb.cleanup()
 

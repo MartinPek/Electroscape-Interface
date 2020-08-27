@@ -1,14 +1,22 @@
 h2 {
     font-weight: bold;
     color: #E6C846;
+    font-size: 2.5em;
 }
 body {
     font-family: 'Montserrat', sans-serif;
     background-color: rgb(30,30,30);
     color: #E6C846;
+    padding: 20px 20px;
 }
 span {
     color: black;
+}
+
+#serial_log {
+    width: 1300px;
+    max-height: 300px;
+    overflow: auto;
 }
 
 button.red {
@@ -17,6 +25,27 @@ button.red {
 
 button.green {
     background-color: green
+}
+
+div.topnav {
+    background-color: black;
+    font-size: 2.5em;
+    margin: auto;
+    font-weight: bold;
+    padding: 14px 16px;
+}
+
+.topnav a {
+    text-align: center;
+    color: #E6C846;
+}
+
+.topnav-right {
+    font-size: 0.75em;
+    float: right;
+}
+
+.topnav a {
 }
 
 div.relay_box {
@@ -30,10 +59,4 @@ span.brain_box {
     display: inline;
     padding: 25px;
     margin: 10px;
-}
-
-#serial_log {
-    width: 1300px;
-    height: 300px;
-    overflow: auto;
 }

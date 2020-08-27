@@ -19,8 +19,8 @@
     <script>
         // update the checkbox values, who thought mixing a bunch of languages is fun
         var box = document.getElementById("relay_{{relay.index}}_override");
-        console.log("value of relay is: " + {{relay.mode_frontend}});
-        box.checked = {{relay.mode_frontend}};
+        console.log("value of relay is: " + {{relay.auto_frontend}});
+        box.checked = {{relay.auto_frontend}};
         console.log(box.checked);
     </script>
 
@@ -38,9 +38,9 @@
             console.log("override_check")
             console.log("relay mode is: " + mode)
             if (mode) {
-                form.form.submit();
+                alert("Uncheck Auto")
             } else {
-                alert("Enable the override before setting the status")
+                form.form.submit();
             }
 
         }
@@ -50,7 +50,7 @@
         <form id="switch_relay" method="POST" action="">
             <button class="status" type="button"
                 name="relaySetStatus_{{relay.index}}"
-                onClick="override_check(this, {{relay.mode_frontend}})"
+                onClick="override_check(this, {{relay.auto_frontend}})"
             >{{relay.status_frontend}}</button>
         <input type="hidden" name="relaySetStatus_{{relay.index}}">
         </form>

@@ -64,7 +64,14 @@
 {% include '_navbar.html' %}
 
 <br>
-<table style="width:100%">
+
+<!--
+<button class="collapsible" onclick="toggle_collapse">Show Relays</button>
+-->
+<br>
+    <h2>Overrides</h2>
+<br>
+<table style="width:100%" id="relays_table">
     <tr>
         <th></th>
         <th>Relays</th>
@@ -75,8 +82,9 @@
             {% include '_relay.html' %}
         {% endfor %}
     </tr>
-    <br><p>Overrides</p></br>
 </table>
+
+
 <br>
 <br>
 
@@ -87,19 +95,21 @@
 </form>
 -->
 
-<br>
-<br>
-<div id="Brains" class="control_section">
-    <br><p>Brains</p></br>
-    {% for brain in brains %}
-        {% include '_brain.html' %}
-    {% endfor %}
-</div>
 
 <br>
     <h2>Brain activity</h2>
 <br>
 <div id="serial_log"></div>
+
+<br>
+<br>
+
+<div id="Brains" class="control_section">
+    <br><h2>Brain Restarts</h2></br>
+    {% for brain in brains %}
+        {% include '_brain.html' %}
+    {% endfor %}
+</div>
 
 <!--
 <script>
@@ -110,10 +120,28 @@
 
 <br>
 <br>
- <h2>Debug: </h2>
+    <h2>Debug: </h2>
 <br>
 <br>
 <div id="debug_log">This is the debug_log</div>
+
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+            console.log("collapse")
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight){
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

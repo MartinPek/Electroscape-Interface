@@ -76,7 +76,7 @@ class Brain:
 class STB:
     def __init__(self):
         self.updates = []
-        self.serial_buffer = ["testing so", "testing so", "testing so","testing so","testing so"]
+        self.serial_buffer = ["line1\n", "line2\n", "line3\n"]
         self.serial_updates = []
         self.settings, self.relays, self.brains = self.__load_stb()
         self.GPIO = self.__gpio_init()
@@ -157,6 +157,17 @@ class STB:
         relay.set_status(status)
         self.GPIO.output(relay.output, relay.status)
 
+    def restart_brain(self, part_index, value, test):
+        print("restart_brain is WIP will we get RS485 communication ")
+
+    def __add_serial_lines(self, lines):
+        for line in lines:
+            # if we have problems with line termination for whatever reason we can edit them here
+            self.serial_updates.insert(0, line)
+            self.serial_buffer.insert(0, line)
+            new_size = min(len(self.serial_buffer), self.settings.serial_limit)
+            self.serial_buffer = self.serial_buffer[:new_size]
+
     # reads and updates the STB and sets/mirrors states
     def update_stb(self):
         print("update_stb")
@@ -173,13 +184,8 @@ class STB:
                 if new_status != relay.status:
                     relay.set_status(new_status)
                     self.updates.append([relay_no, relay.status_frontend])
-
-        self.serial_updates.insert(0, str(dt.now()) + "empty space empty saceempty spaceempty spaceempty spaceempty space end \n")
-        self.serial_updates.insert(0, str(dt.now()) + "\n")
-        # todo: here needs to be a for loop for the lines in the buffer
-        # self.serial_buffer.insert(0, self.serial_updates)
-        new_size = min(len(self.serial_buffer), self.settings.serial_limit)
-        self.serial_buffer = self.serial_buffer[:new_size]
+        self.__add_serial_lines([str(dt.now()) + "\n",
+                                 "more lines\n", "and more\n"])
 
 
 def cleanup(self):

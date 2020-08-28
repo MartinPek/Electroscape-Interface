@@ -24,14 +24,16 @@
 # however its native to flask mby try backgroundsheduler
 # https://github.com/viniciuschiele/flask-apscheduler
 
+
 '''
 TODO:
 - Serial msgs need to be stored on the backend aswell
+- collapsible elements
+- make overrides scrollable, reduce the internal padding
 - Log for GM shall be one log for all brains, simply add a tag of the affected relays from the given broadcasting brain
 - Verify double post of hidden elements is not causing problems?
 post returned: ImmutableMultiDict([('relayOverride_0', 'on'), ('relayOverride_0', '')])
 - rename set_relay ad set_override to flip? maybe differentiation here with another func?
-
 '''
 
 
@@ -67,10 +69,12 @@ def interpreter(immuteable):
     form_dict = immuteable.to_dict()
     action_dict = {
         "relayOverride": stb.set_override,
-        "relaySetStatus": stb.set_relay
+        "relaySetStatus": stb.set_relay,
+        "restartBrain": stb.restart_brain,
     }
 
     for key in form_dict.keys():
+        print("key is {}".format(key))
         action, part_index = split("_", key)
         part_index = int(part_index)
         print("action is {}".format(action))
@@ -128,7 +132,7 @@ def updater():
 
 
 def main():
-    socketio.run(app, debug=False)
+    socketio.run(app, debug=False, host='0.0.0.0')
     # app.run(debug=True)
 
 

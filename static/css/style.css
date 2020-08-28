@@ -1,7 +1,6 @@
 h2 {
     font-weight: bold;
-    color: #E6C846;
-    font-size: 2.5em;
+    font-size: 1.5em;
 }
 body {
     font-family: 'Montserrat', sans-serif;
@@ -9,54 +8,64 @@ body {
     color: #E6C846;
     padding: 20px 20px;
 }
-span {
-    color: black;
-}
 
-#serial_log {
-    width: 1300px;
+div.log {
+    width: 900px;
     max-height: 300px;
     overflow: auto;
-}
-
-button.red {
-    background-color: red
-}
-
-button.green {
-    background-color: green
+    padding: 0px 30px;
 }
 
 div.topnav {
-    background-color: black;
+    margin-top: 0;
+    margin-left: 0;
+    /* background-color: rgb(30,30,30); */
     font-size: 2.5em;
     margin: auto;
     font-weight: bold;
-    padding: 14px 16px;
+    padding: 0px 30px;
 }
 
-.topnav a {
-    text-align: center;
-    color: #E6C846;
-}
-
-.topnav-right {
+.left{
     font-size: 0.75em;
-    float: right;
+    align: center
 }
 
-.topnav a {
+.right {
+    float: right;
+    padding: 0px 120px;
+}
+
+.dropdown {
+    background-color: #E6C846;
+    color: black;
+}
+
+.button {
+    background-color: #E6C846;
+    color: black;
+    padding: 0px 30px;
+}
+
+.status {
+    background-color: #E6C846;
+    color: black;
 }
 
 div.relay_box {
-    background-color: darkgrey;
+    background-color: rgb(30,30,30):
     display: inline;
-    padding: 25px;
+    padding: 0px 30px;
     margin: 10px;
 }
+
+div.brain_restarts {
+    padding: 0px 30px;
+}
+
 span.brain_box {
-    background-color: darkgrey;
+    background-color: rgb(30,30,30);
     display: inline;
-    padding: 25px;
+    padding: 0px 30px;
     margin: 10px;
 }

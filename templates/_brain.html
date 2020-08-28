@@ -1,4 +1,4 @@
-<div>
+<div class="brain_restarts">
 
     <!--  span class="brain_box" -->
     {{brain.name}}
@@ -7,7 +7,7 @@
     {% endfor %}
 
     <form method="POST" action="">
-        <button type="submit" name="restartBrain_0" value="restart {{brain.name}}">RESTART</button>
+        <button type="submit" class="button" name="restartBrain_0" value="restart {{brain.name}}">RESTART</button>
     </form>
 
     <!--

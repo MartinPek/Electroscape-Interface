@@ -35,8 +35,8 @@
             socket.on('relay_update', function(data, cb) {
                 var status_buttons = document.getElementsByClassName("status")
                 data.updates.forEach(function (relay_data) {
-                    console.log("relay " + relay_data[0] + " has been updated to " + relay_data[1])
-                    status_buttons[relay_data[0]].innerHTML = relay_data[1]
+                    console.log("relay " + relay_data[0] + " has been updated to " + relay_data[1]);
+                    status_buttons[relay_data[0]].innerHTML = relay_data[1];
                 });
 
                 $('#debug_log').append('<br>' + $('<div/>').text('Received stuff').html());
@@ -60,9 +60,7 @@
 </head>
 
 <body>
-
 {% include '_navbar.html' %}
-
 <br>
 
 <!--
@@ -99,13 +97,13 @@
 <br>
     <h2>Brain activity</h2>
 <br>
-<div id="serial_log"></div>
+<div id="serial_log" class="log"></div>
 
 <br>
 <br>
 
 <div id="Brains" class="control_section">
-    <br><h2>Brain Restarts</h2></br>
+    <br><h2>Brain Restarts</h2>
     {% for brain in brains %}
         {% include '_brain.html' %}
     {% endfor %}
@@ -123,7 +121,7 @@
     <h2>Debug: </h2>
 <br>
 <br>
-<div id="debug_log">This is the debug_log</div>
+<div id="debug_log" class="log" >This is the debug_log</div>
 
 <script>
     var coll = document.getElementsByClassName("collapsible");

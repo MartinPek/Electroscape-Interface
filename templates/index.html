@@ -77,7 +77,9 @@
     <tr>
         <th>Auto</th>
         {% for relay in relays %}
-            {% include '_relay.html' %}
+            {% if not relay.hidden or extended_relays %}
+                {% include '_relay.html' %}
+            {% endif %}
         {% endfor %}
     </tr>
 </table>

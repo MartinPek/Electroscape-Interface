@@ -49,12 +49,15 @@ class Relay:
         self.status = status
         self.__set_frontend_status()
 
-    def __init__(self, name, active_high, auto, brain_association, intput_pin, output_pin, index):
+    def __init__(self, name, active_high, auto, hidden, brain_association, intput_pin, output_pin, index):
         self.name = name
         self.active_high = active_high
         self.auto = auto
         self.auto_frontend = "true"
+        # this just is a function used to set the frontend to the same as backend,
+        # just here to init the latter
         self.set_auto(self.auto)
+        self.hidden = hidden
         self.brain_association = brain_association
         self.input = intput_pin
         self.output = output_pin
@@ -82,6 +85,7 @@ class STB:
         self.GPIO = self.__gpio_init()
         self.update_stb()
         self.user = False
+        self.extended_relays = False
         print("stb init done")
 
     def __load_stb(self):
@@ -159,7 +163,23 @@ class STB:
         self.GPIO.output(relay.output, relay.status)
 
     def restart_brain(self, part_index, value, test):
-        print("restart_brain is WIP will we get RS485 communication ")
+        # Todo
+        print("restart_brain is WIP till we get RS485 communication ")
+
+    # *_ dumps unused variables
+    def login(self, *args):
+        user = args[1]
+        print("loggig in user {}".format(user))
+        self.user = user
+
+
+
+    def extend_relays(self, *_):
+        self.extended_relays = True
+
+    def logout(self, *_):
+        self.user = False
+        self.extended_relays = False
 
     def __add_serial_lines(self, lines):
         for line in lines:

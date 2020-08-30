@@ -1,30 +1,35 @@
 <div class="topnav">
     <span class="left">
         STB-Pi-Interface {{ room_name }}
+        {% if extended_relays %}
+            , full relay access
+        {% endif %}
     </span>
     <!--<a class="topnav-right" href="{{ url_for('login') }}">Login</a> -->
 
+
+    {% if not username %}
     <span class="right">
-        {% if not username %}
         <div class="dropdown">Login
             <span class="dropdown-content">
                 <form method="POST" action="">
-                    <input type="text" name="userName" value="Username"><br>
+                    <input type="text" name="login" value="Username"><br>
                     <label>
-                        <input type="checkbox" name="extendedControl">
+                        <input type="checkbox" name="extend_relays">
                         Extended relays
                     </label>
                 </form>
             </span>
         </div>
-        {% else %}
-            <form id="logout_btn" method="POST" action="">
-                <button type="submit"
-                    name="logout"
-                >logout {{username}}</button>
-            </form>
-        {% endif %}
     </span>
+    {% else %}
+        <span class="right">
+            <form id="logout_btn" class="button" method="POST" action="">
+                <button type="submit" name="logout">
+                    logout {{username}}</button>
+            </form>
+        </span>
+    {% endif %}
 
 
 </div>

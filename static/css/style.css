@@ -54,7 +54,7 @@ div.topnav {
     display: block;
 }
 
-.button {
+button {
     background-color: #E6C846;
     color: black;
     padding: 0px 30px;

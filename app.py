@@ -73,6 +73,9 @@ def interpreter(immuteable):
         "relayOverride": stb.set_override,
         "relaySetStatus": stb.set_relay,
         "restartBrain": stb.restart_brain,
+        "login": stb.login,
+        "extend_relays": stb.extend_relays,
+        "logout": stb.logout
     }
 
     for key in form_dict.keys():
@@ -90,6 +93,7 @@ def interpreter(immuteable):
         try:
             action_dict[action](part_index, form_dict[key], form_dict.keys())
         except KeyError as key_e:
+            # TODO: pass this error to the frontend
             print("We got a keyerror")
             print(key_e)
 
@@ -110,16 +114,16 @@ def index():
         brains = stb.brains
         relays = stb.relays
         return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
-                               async_mode=socketio.async_mode,
-                               serial_limit=stb.settings.serial_limit)
+                               async_mode=socketio.async_mode, username=stb.user,
+                               extended_relays=stb.extended_relays, serial_limit=stb.settings.serial_limit)
     elif request.method == 'POST':
         print("post returned: {}".format(request.form))
         interpreter(request.form)
         brains = stb.brains
         relays = stb.relays
         return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
-                               async_mode=socketio.async_mode,
-                               serial_limit=stb.settings.serial_limit)
+                               async_mode=socketio.async_mode, username=stb.user,
+                               extended_relays=stb.extended_relays, serial_limit=stb.settings.serial_limit)
     else:
         return "something went wrong with the request, reload with F5"
 

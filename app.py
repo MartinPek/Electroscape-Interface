@@ -28,7 +28,9 @@
 '''
 TODO:
 - Serial msgs need to be stored on the backend aswell
+- add exceptions to get and posts
 - collapsible elements
+- buttons with red and green colours?
 - make overrides scrollable, reduce the internal padding
 - Log for GM shall be one log for all brains, simply add a tag of the affected relays from the given broadcasting brain
 - Verify double post of hidden elements is not causing problems?
@@ -75,13 +77,21 @@ def interpreter(immuteable):
 
     for key in form_dict.keys():
         print("key is {}".format(key))
-        action, part_index = split("_", key)
-        part_index = int(part_index)
+        try:
+            action, part_index = split("_", key)
+            part_index = int(part_index)
+        except ValueError:
+            action = key
+            part_index = None
         print("action is {}".format(action))
         # careful with the functions they values
         # passed are all strings since it comes from jsons
         # TODO: define how we pass stuff, this could limit us in the future
-        action_dict[action](part_index, form_dict[key], form_dict.keys())
+        try:
+            action_dict[action](part_index, form_dict[key], form_dict.keys())
+        except KeyError as key_e:
+            print("We got a keyerror")
+            print(key_e)
 
     '''
     if action == "relayOverride":

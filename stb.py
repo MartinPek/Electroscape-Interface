@@ -81,6 +81,7 @@ class STB:
         self.settings, self.relays, self.brains = self.__load_stb()
         self.GPIO = self.__gpio_init()
         self.update_stb()
+        self.user = False
         print("stb init done")
 
     def __load_stb(self):

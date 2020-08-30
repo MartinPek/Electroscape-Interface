@@ -33,12 +33,25 @@ div.topnav {
 
 .right {
     float: right;
-    padding: 0px 120px;
+    padding: 0px 140px;
 }
 
 .dropdown {
+    padding: 0px 15px;
+    position: relative;
     background-color: #E6C846;
     color: black;
+}
+
+.dropdown-content {
+    font-weight: normal;
+    display: none;
+    position: relative;
+    background-color: #E6C846;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
 }
 
 .button {
@@ -68,4 +81,9 @@ span.brain_box {
     display: inline;
     padding: 0px 30px;
     margin: 10px;
+}
+
+input[type="checkbox"] {
+    vertical-align: middle;
+    padding-left: 15px
 }

@@ -3,8 +3,28 @@
         STB-Pi-Interface {{ room_name }}
     </span>
     <!--<a class="topnav-right" href="{{ url_for('login') }}">Login</a> -->
+
     <span class="right">
-        <button class="dropdown">Login</button>
+        {% if not username %}
+        <div class="dropdown">Login
+            <span class="dropdown-content">
+                <form method="POST" action="">
+                    <input type="text" name="userName" value="Username"><br>
+                    <label>
+                        <input type="checkbox" name="extendedControl">
+                        Extended relays
+                    </label>
+                </form>
+            </span>
+        </div>
+        {% else %}
+            <form id="logout_btn" method="POST" action="">
+                <button type="submit"
+                    name="logout"
+                >logout {{username}}</button>
+            </form>
+        {% endif %}
     </span>
+
 
 </div>

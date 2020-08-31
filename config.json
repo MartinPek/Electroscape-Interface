@@ -6,7 +6,10 @@
     ["Kamin", true, true, false, 1],
     ["UV-Licht", true, true, false, 1],
     ["Licht R2", true, true, false, 1],
-    ["Exit", true, true, false, 1]
+    ["Exit1", true, true, false, 1],
+    ["Exit2", true, true, false, 1],
+    ["Exit3", true, true, false, 1],
+    ["Exit4", true, true, false, 1]
   ],
   "Brains": ["Keypads", "Skulpturen", "Exit"],
   "Pins_IO": [

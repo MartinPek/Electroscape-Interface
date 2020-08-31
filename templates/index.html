@@ -69,21 +69,22 @@
 <br>
     <h2>Overrides</h2>
 <br>
-<table style="width:100%" id="relays_table">
-    <tr>
-        <th></th>
-        <th>Relays</th>
-    </tr>
-    <tr>
-        <th>Auto</th>
-        {% for relay in relays %}
-            {% if not relay.hidden or extended_relays %}
-                {% include '_relay.html' %}
-            {% endif %}
-        {% endfor %}
-    </tr>
-</table>
 
+<div style="overflow-x:auto;">
+    <table class="relays_table" id="relays_table">
+        <tr>
+            <th><h3>Relaisname</h3></th>
+        </tr>
+        <tr>
+            <th><h3>Auto</h3></th>
+            {% for relay in relays %}
+                {% if not relay.hidden or extended_relays %}
+                    {% include '_relay.html' %}
+                {% endif %}
+            {% endfor %}
+        </tr>
+    </table>
+</div>
 
 <br>
 <br>
@@ -111,12 +112,6 @@
     {% endfor %}
 </div>
 
-<!--
-<script>
-    $('#serial_log').text("fuck this")
-    console.log( {{serial_buffer}} )
-</script>
--->
 
 <br>
 <br>
@@ -125,6 +120,7 @@
 <br>
 <div id="debug_log" class="log" >This is the debug_log</div>
 
+<!--
 <script>
     var coll = document.getElementsByClassName("collapsible");
     var i;
@@ -142,6 +138,7 @@
         });
     }
 </script>
+-->
 
 </body>
 </html>

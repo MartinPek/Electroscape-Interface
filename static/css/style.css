@@ -32,6 +32,8 @@ div.log {
 }
 
 div.topnav {
+    width: 100%;
+    overflow: hidden;
     margin-top: 0;
     margin-left: 0;
     /* background-color: rgb(30,30,30); */
@@ -47,8 +49,8 @@ div.topnav {
 }
 
 .right {
+    font-size: 0.75em;
     float: right;
-    padding: 0px 140px;
 }
 
 .dropdown {
@@ -66,11 +68,13 @@ div.topnav {
 }
 
 .dropdown:hover .dropdown-content {
+    font-weight: normal;
     display: block;
 }
 
 button {
     background-color: #E6C846;
+    font-weight: bold;
     color: black;
     padding: 0px 30px;
 }

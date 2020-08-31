@@ -27,12 +27,9 @@
 
 '''
 TODO:
-- Serial msgs need to be stored on the backend aswell
-- add exceptions to get and posts
-- collapsible elements
+- add frontendaction to (both?) logs aswell, having both requires a modification to the seriallogger
+- collapsible elements?
 - buttons with red and green colours?
-- make overrides scrollable, reduce the internal padding
-- Log for GM shall be one log for all brains, simply add a tag of the affected relays from the given broadcasting brain
 - Verify double post of hidden elements is not causing problems?
 post returned: ImmutableMultiDict([('relayOverride_0', 'on'), ('relayOverride_0', '')])
 - rename set_relay ad set_override to flip? maybe differentiation here with another func?
@@ -140,7 +137,7 @@ def updater():
             if len(stb.serial_updates) > 0:
                 socketio.emit('serial_update', {'lines': stb.serial_updates}, namespace='/test', broadcast=True)
                 stb.serial_updates = []
-            socketio.sleep(1)
+            socketio.sleep(20)
     finally:
         stb.cleanup()
 

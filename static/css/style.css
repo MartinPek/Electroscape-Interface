@@ -15,13 +15,14 @@ body {
 
 table.relays_table {
     width: 100%;
+    max-width: 900px;
     padding: 0px 15px;
     border-collapse: separate;
 }
 
-.td, .th {
+td, th {
     border-spacing: 0px 15px;
-    padding: 0px 15px;
+    padding: 0px 5px;
 }
 
 div.log {

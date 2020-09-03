@@ -27,6 +27,8 @@
 
 '''
 TODO:
+- customized and colourized button status buttons inside json
+- check whats up with taht oen websocket problem i had, try to break it
 - add frontendaction to (both?) logs aswell, having both requires a modification to the seriallogger
 - collapsible elements?
 - buttons with red and green colours?
@@ -103,26 +105,21 @@ def interpreter(immuteable):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     global stb_thread
+    room_name = stb.settings.room_name
     if stb_thread is None:
         stb_thread = socketio.start_background_task(updater)
-    room_name = stb.settings.room_name
 
-    if request.method == 'GET':
-        brains = stb.brains
-        relays = stb.relays
-        return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
-                               async_mode=socketio.async_mode, username=stb.user,
-                               extended_relays=stb.extended_relays, serial_limit=stb.settings.serial_limit)
-    elif request.method == 'POST':
+    if request.method == 'POST':
         print("post returned: {}".format(request.form))
         interpreter(request.form)
-        brains = stb.brains
-        relays = stb.relays
-        return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
-                               async_mode=socketio.async_mode, username=stb.user,
-                               extended_relays=stb.extended_relays, serial_limit=stb.settings.serial_limit)
-    else:
-        return "something went wrong with the request, reload with F5"
+    if not stb.user:
+        return render_template('login.html', room_name=room_name, username=stb.user)
+
+    brains = stb.brains
+    relays = stb.relays
+    return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
+                           async_mode=socketio.async_mode, username=stb.user,
+                           extended_relays=stb.extended_relays, serial_limit=stb.settings.serial_limit)
 
 
 def updater():
@@ -137,7 +134,7 @@ def updater():
             if len(stb.serial_updates) > 0:
                 socketio.emit('serial_update', {'lines': stb.serial_updates}, namespace='/test', broadcast=True)
                 stb.serial_updates = []
-            socketio.sleep(20)
+            socketio.sleep(1)
     finally:
         stb.cleanup()
 

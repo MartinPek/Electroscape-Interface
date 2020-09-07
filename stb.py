@@ -47,6 +47,10 @@ class Relay:
 
     def set_status(self, status):
         self.status = status
+        if self.status:
+            self.btn_clr_frontend = "green"
+        else:
+            self.btn_clr_frontend = "red"
         self.__set_frontend_status()
 
     def __init__(self, name, active_high, auto, hidden, brain_association, intput_pin, output_pin, index):
@@ -62,6 +66,8 @@ class Relay:
         self.input = intput_pin
         self.output = output_pin
         self.status = False
+        # since its going to be a pain in the ass on frontend even converting bools...
+        self.btn_clr_frontend = 'green'
         self.set_status(self.status)
         self.index = index
 
@@ -204,7 +210,7 @@ class STB:
 
                 if new_status != relay.status:
                     relay.set_status(new_status)
-                    self.updates.append([relay_no, relay.status_frontend])
+                    self.updates.append([relay_no, relay.status_frontend, relay.btn_clr_frontend])
         self.__add_serial_lines([str(dt.now()) + "\n",
                                  "more lines\n", "and more\n"])
 

@@ -49,6 +49,7 @@
     <span>
         <form id="switch_relay" method="POST" action="">
             <button class="status" type="button"
+                style="background-color:{{relay.btn_clr_frontend}}"
                 name="relaySetStatus_{{relay.index}}"
                 onClick="override_check(this, {{relay.auto_frontend}})"
             >{{relay.status_frontend}}</button>

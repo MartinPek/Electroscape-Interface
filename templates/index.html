@@ -19,7 +19,6 @@
     <!-- JS code to work with socketIO -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <script src="//code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function() {
             // Use a "/test" namespace.
@@ -36,7 +35,10 @@
                 var status_buttons = document.getElementsByClassName("status")
                 data.updates.forEach(function (relay_data) {
                     console.log("relay " + relay_data[0] + " has been updated to " + relay_data[1]);
-                    status_buttons[relay_data[0]].innerHTML = relay_data[1];
+                    if (status_buttons[relay_data[0]] != null) {
+                        status_buttons[relay_data[0]].innerHTML = relay_data[1];
+                        status_buttons[relay_data[0]].style.backgroundColor = relay_data[2];
+                    }
                 });
 
                 $('#debug_log').append('<br>' + $('<div/>').text('Received stuff').html());
@@ -57,6 +59,7 @@
 
         });
     </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
 </head>
 
 <body>

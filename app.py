@@ -27,13 +27,17 @@
 
 '''
 TODO:
+- clear up questions for future requirements to make sure
+the interpreter wont need to run exceptions
 - customized and colourized button status buttons inside json
-- check whats up with taht oen websocket problem i had, try to break it
-- add frontendaction to (both?) logs aswell, having both requires a modification to the seriallogger
+- add frontendaction report to (both?) logs aswell, having both requires a modification to the seriallogger
 - collapsible elements?
-- buttons with red and green colours?
 - Verify double post of hidden elements is not causing problems?
 post returned: ImmutableMultiDict([('relayOverride_0', 'on'), ('relayOverride_0', '')])
+Answer to that: a dict with duplicate keys will return only the key once with for key in test_dict.keys():
+aswell as return the value of the last key duplicate so for our application we're fine since i do
+all the work backend so far, if that changes we know how to do deal with duplicates.
+
 - rename set_relay ad set_override to flip? maybe differentiation here with another func?
 '''
 
@@ -88,7 +92,7 @@ def interpreter(immuteable):
         print("action is {}".format(action))
         # careful with the functions they values
         # passed are all strings since it comes from jsons
-        # TODO: define how we pass stuff, this could limit us in the future
+        # TODO: define how we pass stuff with abdullah, this could limit us in the future
         try:
             action_dict[action](part_index, form_dict[key], form_dict.keys())
         except KeyError as key_e:

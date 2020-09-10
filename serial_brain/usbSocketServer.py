@@ -11,13 +11,21 @@ def start_server():
 
 import socket
 from time import sleep
-from config import Settings as cfg
+import json
 import glob
 import serial
 from threading import Thread
 
-baud = cfg["baud"]
-socket_port = cfg["socket_port"]
+try:
+    with open('serial_config.json') as json_file:
+        cfg = json.loads(json_file.read())
+        baud = cfg["baud"]
+        socket_port = cfg["socket_port"]
+except ValueError as e:
+    print('failure to read serial_config.json')
+    print(e)
+    exit()
+
 global sock
 clients = []
 
@@ -29,10 +37,12 @@ def scan_serial():
             ser = serial.Serial(usb_port, baud)
             print("serial found!")
             return ser
-        except (OSError, serial.SerialException) as e:
+        except (OSError) as e:
             if e.errno == 13:
                 print("Permission error")
             print(e)
+    print("no Serial plugged in, exiting application")
+    exit()
 
 
 def setup_socket():
@@ -59,7 +69,9 @@ def transmit(line):
         try:
             client.send(line)
         except socket.error as msg:
-            print("Socket transmission Error: %s", msg)
+            print("Socket transmission Error: {}".format(msg))
+            print("a client dropped")
+            clients.remove(client)
 
 
 def read_serial(ser):
@@ -81,7 +93,6 @@ def handle_serial(ser):
 
     print("starting to monitor")
     while ser.is_open is not None and ser.is_open:
-
         line = read_serial(ser)
         if not line and type(line) is bool:
             print("serial connection lost")
@@ -95,16 +106,18 @@ def handle_serial(ser):
 def manage_sockets():
     print('waiting for connection on the socket')
     global clients
-    client, address = sock.accept()
-    clients.append(client)
-    print('Got connection from', address)
-    client.send(b'hello there, you will be listening to the Arduino\n')
+    while True:
+        client, address = sock.accept()
+        clients.append(client)
+        print('Got connection from', address)
+        client.send(b'hello there, you will be listening to the Arduino\n')
 
 
 def main():
     setup_socket()
     ser = scan_serial()
-    Thread.start_new_thread(manage_sockets, ())
+    thread = Thread(target=manage_sockets)
+    thread.start()
     while True:
         handle_serial(ser)
 

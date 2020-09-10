@@ -1,6 +1,7 @@
 from random import random
 import json
 from datetime import datetime as dt
+from serial_brain.socket_client import SocketClient
 
 # TODO:
 # Test of the clean exit
@@ -13,6 +14,7 @@ rpi_env = True
     bool_convert = {"True": "false", "Talse": "true"}
 '''
 bool_dict = {"on": True, "off": False}
+serial_socket = SocketClient('127.0.0.1', 12345)
 
 
 class Settings:
@@ -38,7 +40,6 @@ class Relay:
         self.__set_frontend_auto()
 
     def __set_frontend_status(self):
-        print(self)
         print("setting status for frontend for relay {}".format(self.name))
         if self.status:
             self.status_frontend = "On"
@@ -211,8 +212,7 @@ class STB:
                 if new_status != relay.status:
                     relay.set_status(new_status)
                     self.updates.append([relay_no, relay.status_frontend, relay.btn_clr_frontend])
-        self.__add_serial_lines([str(dt.now()) + "\n",
-                                 "more lines\n", "and more\n"])
+        self.__add_serial_lines(serial_socket.read_buffer())
 
 
 def cleanup(self):

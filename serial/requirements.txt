@@ -1,0 +1,8 @@
+# in case pycharm is bitching or you use another editor
+# pip3 install -r requirements.txt
+
+# from the main logger files
+serial
+glob
+socket
+threading

@@ -1,0 +1,25 @@
+{
+  "Room_name": "Galerie Test",
+  "Relays are Name, Active High, Auto, Hidden, BrainNo (Physical stuff is Indexed from 1)": "",
+  "Relays": [
+    ["Licht Raum1", true, true, false, 1],
+    ["Kamin", true, true, false, 1],
+    ["Tresor", true, true, false, 1],
+    ["UV-Licht", true, true, false, 1],
+    ["Alarmlicht", true, true, true, 1],
+    ["Exit", true, true, false, 1]
+  ],
+  "Brains": ["Keypads", "Skulpturen", "Exit"],
+  "Pins_IO": [
+    [16, 4],
+    [17, 5],
+    [18, 6],
+    [19, 13],
+    [20, 8],
+    [21, 9],
+    [22, 12],
+    [23, 11]
+  ],
+  "Master_reset": 27,
+  "Serial_line_limit": 50
+}

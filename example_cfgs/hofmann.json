@@ -1,0 +1,28 @@
+{
+  "Room_name": "Galerie Test",
+  "Relays are Name, Active High, Auto, Hidden, BrainNo (Physical stuff is Indexed from 1)": "",
+  "Relays": [
+    ["Keypad", true, true, false, 1],
+    ["Lüfter (klein, abluft)", true, true, true, 1],
+    ["Lüfter (groß, abluft)", true, true, true, 1],
+    ["Lüfter (klein, zufuhr)", true, true, true, 1],
+    ["RPi Video", true, true, false, 1],
+    ["Nebelmaschine", true, true, true, 1],
+    ["Reinraum Light", true, true, false, 1],
+    ["Pneumatiktür", true, true, false, 1],
+    ["Alarmleuchten", true, true, true, 1]
+  ],
+  "Brains": ["Keypads", "Skulpturen", "Exit"],
+  "Pins_IO": [
+    [16, 4],
+    [17, 5],
+    [18, 6],
+    [19, 13],
+    [20, 8],
+    [21, 9],
+    [22, 12],
+    [23, 11]
+  ],
+  "Master_reset": 27,
+  "Serial_line_limit": 50
+}

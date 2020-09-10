@@ -1,8 +1,8 @@
 
-venv/
+serial_brain/__pycache__/
+
+examples/
 
 __pycache__/
 
 .idea/
-
-examples/

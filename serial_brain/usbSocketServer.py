@@ -30,23 +30,23 @@ global sock
 clients = []
 
 
-def scan_serial():
-    ports = glob.glob('/dev/ttyUSB[0-9]')
-    for usb_port in ports:
-        try:
-            ser = serial.Serial(usb_port, baud)
-            print("serial found!")
-            return ser
-        except (OSError) as e:
-            if e.errno == 13:
-                print("Permission error")
-            print(e)
-    print("no Serial plugged in, exiting application")
-    exit()
+def connect_serial():
+    while True:
+        ports = glob.glob('/dev/ttyUSB[0-9]')
+        for usb_port in ports:
+            try:
+                ser = serial.Serial(usb_port, baud)
+                print("serial found!")
+                return ser
+            except OSError as err:
+                if err.errno == 13:
+                    print("Permission error")
+                print(err)
+        print("no serial found, checking again")
+        sleep(0.5)
 
 
 def setup_socket():
-
     global sock
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -90,9 +90,8 @@ def read_serial(ser):
 
 
 def handle_serial(ser):
-
     print("starting to monitor")
-    while ser.is_open is not None and ser.is_open:
+    while ser is not None and ser.is_open:
         line = read_serial(ser)
         if not line and type(line) is bool:
             print("serial connection lost")
@@ -104,7 +103,7 @@ def handle_serial(ser):
 # for now limited to a single client, would like to expand this in the future but for now
 # this has to do
 def manage_sockets():
-    print('waiting for connection on the socket')
+    print('starting to seek connection on the socket')
     global clients
     while True:
         client, address = sock.accept()
@@ -115,10 +114,11 @@ def manage_sockets():
 
 def main():
     setup_socket()
-    ser = scan_serial()
     thread = Thread(target=manage_sockets)
     thread.start()
+    # this loops back when the serial connection breaks, so in case of a disconnect it reconnects
     while True:
+        ser = connect_serial()
         handle_serial(ser)
 
 

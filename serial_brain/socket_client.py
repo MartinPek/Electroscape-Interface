@@ -12,16 +12,18 @@ class SocketClient:
 
     def __connect(self):
         try:
-            self.s.connect(('127.0.0.1', 12345))
-            return True
+            self.s.connect((self.ip, self.port))
         except socket.error as msg:
             print('socket not found! \n exiting')
             self.s.close()
             return False
+        return True
 
     def __received(self):
         try:
             line = self.s.recv(1024)
+            if type(line) is not str:
+                line = line.decode()
             # Todo: buffer overflow? mby have a ringbuffer? limited size?
             self.buffer.append(line)
             print(line)
@@ -32,6 +34,7 @@ class SocketClient:
     def __run_socket_client(self):
         s = socket.socket()
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(self.timeout)
         self.s = s
         while True:
             if self.__connect():

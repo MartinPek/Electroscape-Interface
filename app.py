@@ -66,7 +66,7 @@ def login():
 @socketio.on('serial_buffer_request', namespace='/test')
 def serial_buffer_request():
     print("sending back to the req")
-    for line in stb.serial_buffer:
+    for line in reversed(stb.serial_buffer):
         emit('serial_update', {'lines': line}, namespace='/test')
 
 
@@ -138,7 +138,7 @@ def updater():
             if len(stb.serial_updates) > 0:
                 socketio.emit('serial_update', {'lines': stb.serial_updates}, namespace='/test', broadcast=True)
                 stb.serial_updates = []
-            socketio.sleep(1)
+            socketio.sleep(0.1)
     finally:
         stb.cleanup()
 

@@ -19,7 +19,7 @@ rpi_env = True
 '''
 bool_dict = {"on": True, "off": False}
 serial_socket = SocketClient('127.0.0.1', 12345)
-# counter = 0
+counter = 0
 
 
 class Settings:
@@ -200,9 +200,6 @@ class STB:
         self.extended_relays = False
 
     def __add_serial_lines(self, lines):
-        if lines is None:
-            return
-        lines.reverse()
         for line in lines:
             # if we have problems with line termination for whatever reason we can edit them here
             self.serial_updates.insert(0, line)
@@ -212,8 +209,8 @@ class STB:
 
     # reads and updates the STB and sets/mirrors states
     def update_stb(self):
-        # global counter
-        # counter += 1
+        global counter
+        counter += 1
         print("update_stb")
         print("adding some random fake updates")
         
@@ -228,9 +225,19 @@ class STB:
 
                 if new_status != relay.status:
                     relay.set_status(new_status)
+                    relay_msg = "Relay {} has been switched to {} by the brain ".format(relay.name, relay.status)
+                    if self.extended_relays or not relay.hidden:
+                        self.__log_action(relay_msg)
+                    else:
+                        print()
+                        # TODO: add to the logger
+
                     self.updates.insert(0, [relay_no, relay.status_frontend, relay.btn_clr_frontend])
-        # self.__add_serial_lines(["counter is at {}".format(counter)])
-        self.__add_serial_lines(serial_socket.read_buffer())
+        self.__add_serial_lines(["counter is at {}".format(counter)])
+        ser_lines = serial_socket.read_buffer()
+        if ser_lines is not None:
+            ser_lines = reversed(ser_lines)
+            self.__add_serial_lines(ser_lines)
 
 
 def cleanup(self):

@@ -4,7 +4,11 @@ from datetime import datetime as dt
 from serial_brain.socket_client import SocketClient
 
 # TODO:
-# Test of the clean exit
+'''
+make logger imported so i can add the frontend information to the log? have it still run 
+parallel to avoid crashes of the frontend affecting the log
+log received relay actions aswell
+'''
 
 rpi_env = True
 
@@ -15,6 +19,7 @@ rpi_env = True
 '''
 bool_dict = {"on": True, "off": False}
 serial_socket = SocketClient('127.0.0.1', 12345)
+# counter = 0
 
 
 class Settings:
@@ -157,6 +162,8 @@ class STB:
             print("KEYERROR!")
         '''
         relay.set_auto(not relay.auto)
+        self.__log_action("User {} has set relay_no {} override to {}".format(
+            self.user, relay.index, relay.auto))
 
     # changes form the frontend applied to the GPIO pins
     def set_relay(self, part_index, status=None, test=None):
@@ -168,6 +175,8 @@ class STB:
         print("setting relay {} to status {}".format(part_index, status))
         relay.set_status(status)
         self.GPIO.output(relay.output, relay.status)
+        self.__log_action("User {} has flipped {} status to {}".format(
+            self.user, relay.name, not status, status))
 
     def restart_brain(self, part_index, value, test):
         # Todo
@@ -179,7 +188,9 @@ class STB:
         print("loggig in user {}".format(user))
         self.user = user
 
-
+    def __log_action(self, message):
+        self.__add_serial_lines([message])
+        print(message)
 
     def extend_relays(self, *_):
         self.extended_relays = True
@@ -189,6 +200,9 @@ class STB:
         self.extended_relays = False
 
     def __add_serial_lines(self, lines):
+        if lines is None:
+            return
+        lines.reverse()
         for line in lines:
             # if we have problems with line termination for whatever reason we can edit them here
             self.serial_updates.insert(0, line)
@@ -198,6 +212,8 @@ class STB:
 
     # reads and updates the STB and sets/mirrors states
     def update_stb(self):
+        # global counter
+        # counter += 1
         print("update_stb")
         print("adding some random fake updates")
         
@@ -206,12 +222,14 @@ class STB:
             if relay.auto:
                 # new_status = bool(self.GPIO.input(relay.input))
                 new_status = bool(round(random()))
+                new_status = False
                 print("mirroring relay {}".format(relay.index))
                 self.GPIO.output(relay.output, relay.status)
 
                 if new_status != relay.status:
                     relay.set_status(new_status)
-                    self.updates.append([relay_no, relay.status_frontend, relay.btn_clr_frontend])
+                    self.updates.insert(0, [relay_no, relay.status_frontend, relay.btn_clr_frontend])
+        # self.__add_serial_lines(["counter is at {}".format(counter)])
         self.__add_serial_lines(serial_socket.read_buffer())
 
 

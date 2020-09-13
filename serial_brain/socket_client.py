@@ -35,15 +35,17 @@ class SocketClient:
             return False
 
     def __run_socket_client(self):
-        s = socket.socket()
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.settimeout(self.timeout)
-        self.s = s
         while True:
-            if self.__connect():
+            s = socket.socket()
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            s.settimeout(self.timeout)
+            self.s = s
+            while True:
+                if not self.__connect():
+                    break
                 while self.__received():
                     pass
-            sleep(1)
+                sleep(1)
             
     def read_buffer(self):
         ret = self.buffer

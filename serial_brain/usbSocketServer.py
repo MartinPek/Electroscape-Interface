@@ -1,13 +1,13 @@
 # Author Martin Pek
 # 2CP - TeamEscape - Engineering
 
-'''
 
+'''
 def start_server():
     host = "127.0.0.1"
     port = 8888         # arbitrary non-privileged port
-
 '''
+
 
 import socket
 from time import sleep

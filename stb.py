@@ -132,8 +132,9 @@ class STB:
             GPIO.setmode(GPIO.BCM)
         except (RuntimeError, ModuleNotFoundError):
             print("Running without GPIOs on non Pi ENV / non RPi.GPIO installed machine")
-            self.settings.self.is_rpi_env = False
+            self.settings.is_rpi_env = False
             from fakeRPiGPIO import GPIO
+            GPIO.VERBOSE = False
         except OSError as e:
             print(e)
             print("sth went terribly wrong with GPIO import")

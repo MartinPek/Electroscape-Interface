@@ -27,18 +27,23 @@
 
 '''
 TODO:
+ImportError: cannot import name 'dump_csp_header' when launching from terminal only
+https://stackoverflow.com/questions/60156202/flask-app-wont-launch-importerror-cannot-import-name-cached-property-from-w
+
+
 - clear up questions for future requirements to make sure
 the interpreter wont need to run exceptions
 - customized and colourized button status buttons inside json
 - add frontendaction report to (both?) logs aswell, having both requires a modification to the seriallogger
 - collapsible elements?
+
 - Verify double post of hidden elements is not causing problems?
 post returned: ImmutableMultiDict([('relayOverride_0', 'on'), ('relayOverride_0', '')])
 Answer to that: a dict with duplicate keys will return only the key once with for key in test_dict.keys():
 aswell as return the value of the last key duplicate so for our application we're fine since i do
 all the work backend so far, if that changes we know how to do deal with duplicates.
 
-- rename set_relay ad set_override to flip? maybe differentiation here with another func?
+- rename set_relay ad set_ovpyterride to flip? maybe differentiation here with another func?
 '''
 
 
@@ -48,6 +53,7 @@ from threading import Thread, Timer
 from time import time, sleep
 from flask_socketio import SocketIO, emit
 from re import split
+from werkzeug.utils import cached_property
 
 
 stb = STB()

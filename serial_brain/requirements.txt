@@ -1,8 +1,11 @@
-# in case pycharm is bitching or you use another editor
+
 # pip3 install -r requirements.txt
 
 # from the main logger files
 serial
+# depending if its excecuted on PC
+fakeRPiGPIO
 glob
 socket
 threading
+Werkzeug==0.16.1

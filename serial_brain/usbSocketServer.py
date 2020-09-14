@@ -1,13 +1,12 @@
 # Author Martin Pek
 # 2CP - TeamEscape - Engineering
 
-
 '''
-def start_server():
-    host = "127.0.0.1"
-    port = 8888         # arbitrary non-privileged port
+Todo:
+fringe case where we dont restart the pi with the socket....
+OSError: [Errno 98] Address already in use
+https://stackoverflow.com/questions/6380057/python-binding-socket-address-already-in-use
 '''
-
 
 import socket
 from time import sleep

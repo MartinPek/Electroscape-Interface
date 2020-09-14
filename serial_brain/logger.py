@@ -21,11 +21,9 @@ from io import BytesIO
 Todo: 
 - pass a parameter to run logging without restart??
 - detect nonresponsive arduino after a while
-- parallel threading to handle multiple sockets???
 - verfiy traffic limits of this, dunno if that is too much traffic potentially
 
 - ~~dump triggered from gamemaster?~~ 
-not needed gamemaster can restart arduinos directly which will trigger the dump
 
 
 

@@ -2,7 +2,7 @@
 # 2CP - TeamEscape - Engineering
 # Serial Data logger for Rpi and Arduino
 
-from config import Settings as cfg
+import json
 import serial
 import re
 from collections import deque
@@ -30,37 +30,37 @@ Todo:
 '''
 # debug flags and other things that may be modified
 debug_mode = False
-
-#
-
 script_dir = os.getcwd()
 
 # --- global const var from the config
 
-# settings import ... really not happy with this... should be a function and json
-# is a candidate for a refractoring
-# usb_port = cfg["usb_port"]
-baud = cfg["baud"]
-log_prefix = cfg["log_prefix"]
+try:
+    with open('serial_config.json') as json_file:
+        cfg = json.loads(json_file.read())
+        baud = cfg["baud"]
+        log_prefix = cfg["log_prefix"]
 
-if debug_mode:
-    log_path = os.path.join(script_dir, "testlogs/more logs/more logs")
-else:
-    log_path = cfg["log_path_relative"]
-    log_path = os.path.join(script_dir, log_path)
+        if debug_mode:
+            log_path = os.path.join(script_dir, "testlogs/more logs/more logs")
+        else:
+            log_path = cfg["log_path_relative"]
+            log_path = os.path.join(script_dir, log_path)
+        tag_character = cfg["tag_character"]
+        legacy_character = cfg["legacy_character"]
 
-tag_character = cfg["tag_character"]
-legacy_character = cfg["legacy_character"]
+        boot_keyword = cfg["boot_keyword"]
+        globals_keywords = cfg["globals_keywords"]
+        header_keywords = cfg["header_keywords"]
+        setup_keywords = cfg["setup_keywords"]
+        event_call_keyword = cfg["event_call_keyword"]
 
-boot_keyword = cfg["boot_keyword"]
-globals_keywords = cfg["globals_keywords"]
-header_keywords = cfg["header_keywords"]
-setup_keywords = cfg["setup_keywords"]
-event_call_keyword = cfg["event_call_keyword"]
-
-buffer_lines = cfg["buffer_lines"]
-socket_port = cfg["socket_port"]
-arduino_timeout = cfg["arduino_timeout"]
+        buffer_lines = cfg["buffer_lines"]
+        socket_port = cfg["socket_port"]
+        arduino_timeout = cfg["arduino_timeout"]
+except ValueError as e:
+    print('failure to read serial_config.json')
+    print(e)
+    exit()
 
 
 # *** global Vars

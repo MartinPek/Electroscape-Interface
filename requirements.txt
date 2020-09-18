@@ -1,5 +1,15 @@
+# pip3 install -r requirements.txt
+
 python-dotenv
 # RPi.GPIO
 fakeRPiGPIO
 flask
 flask_socketio
+Werkzeug==0.16.1
+
+# for the logger
+serial
+glob3
+socket
+threading
+

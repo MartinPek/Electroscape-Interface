@@ -63,7 +63,7 @@ try:
         event_call_keyword = cfg["event_call_keyword"]
 
         buffer_lines = cfg["buffer_lines"]
-        socket_port = cfg["socket_port"]
+        serial_port = cfg["serial_port"]
         arduino_timeout = cfg["arduino_timeout"]
         brain_tag = cfg["brain_tag"]
 except ValueError as e:
@@ -71,7 +71,7 @@ except ValueError as e:
     print(e)
     exit()
 
-serial_socket = SocketClient('127.0.0.1', socket_port)
+serial_socket = SocketClient('127.0.0.1', serial_port)
 cmd_socket = None
 buffer = deque(maxlen=buffer_lines)
 

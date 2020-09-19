@@ -18,7 +18,8 @@ rpi_env = True
     bool_convert = {"True": "false", "Talse": "true"}
 '''
 bool_dict = {"on": True, "off": False}
-serial_socket = SocketClient('127.0.0.1', 12345)
+serial_socket = None
+cmd_socket = None
 counter = 0
 
 
@@ -114,6 +115,20 @@ class STB:
             print('failure to read config.json')
             print(e)
             exit()
+
+        try:
+            with open('serial_brain/serial_config.json') as json_file:
+                cfg = json.loads(json_file.read())
+                serial_port = cfg["serial_port"]
+                cmd_port = cfg["cmd_port"]
+        except ValueError as e:
+            print('failure to read serial_config.json')
+            print(e)
+            exit()
+
+        global serial_socket, cmd_socket
+        serial_socket = SocketClient('127.0.0.1', serial_port)
+        # cmd_socket = SocketClient('127.0.0.1', cmd_port)
 
         for i, relay in enumerate(relays):
             relay_data = relay + pins_IO[i] + [i]

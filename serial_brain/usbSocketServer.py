@@ -3,6 +3,7 @@
 
 '''
 Todo:
+make this importable and useable by the stb.py
 fringe case where we dont restart the pi with the socket....
 OSError: [Errno 98] Address already in use
 https://stackoverflow.com/questions/6380057/python-binding-socket-address-already-in-use
@@ -19,7 +20,7 @@ try:
     with open('serial_config.json') as json_file:
         cfg = json.loads(json_file.read())
         baud = cfg["baud"]
-        socket_port = cfg["socket_port"]
+        socket_port = cfg["serial_port"]
 except ValueError as e:
     print('failure to read serial_config.json')
     print(e)

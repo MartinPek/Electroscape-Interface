@@ -1,7 +1,8 @@
 {
     "usb_port": "/dev/ttyUSB0",
     "baud": 115200,
-    "socket_port": 12345,
+    "serial_port": 12345,
+    "cmd_port": 12346,
     "arduino_timeout": 8,
 
     "this also doubles as the folder name": "",

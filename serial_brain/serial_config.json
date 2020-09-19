@@ -18,5 +18,6 @@
     "parse_keywords": ["!parse_begin", "!parse_end"],
     "event_call_keyword": "!eventcall",
 
-    "buffer_lines": 50
+    "buffer_lines": 50,
+    "brain_tag": "!Br"
 }

@@ -3,35 +3,38 @@
 # Serial Data logger for Rpi and Arduino
 
 import json
-import serial
 import re
+from re import split, match
 from collections import deque
-from datetime import datetime
+from datetime import datetime as dt
 from time import sleep
 import os
 import io
 import subprocess
 import socket
 from io import BytesIO
+from serial_brain.socket_client import SocketClient
 
 
 
 
 '''
 Todo: 
+- adding of timestamps?
 - pass a parameter to run logging without restart??
 - detect nonresponsive arduino after a while
 - verfiy traffic limits of this, dunno if that is too much traffic potentially
 
 - ~~dump triggered from gamemaster?~~ 
 
-
-
 '''
+
+serial_socket = SocketClient('127.0.0.1', 12346)
+
 # debug flags and other things that may be modified
 debug_mode = False
 script_dir = os.getcwd()
-
+brains = []
 # --- global const var from the config
 
 try:
@@ -57,55 +60,84 @@ try:
         buffer_lines = cfg["buffer_lines"]
         socket_port = cfg["socket_port"]
         arduino_timeout = cfg["arduino_timeout"]
+        brain_tag = cfg["brain_tag"]
 except ValueError as e:
     print('failure to read serial_config.json')
     print(e)
     exit()
 
-
-# *** global Vars
-
-header_open = False
-setup_open = False
-globals_open = False
-
-header_sequence = -1
-
-# *** all the buffers
+serial_socket = SocketClient('127.0.0.1', socket_port)
+cmd_socket = None
 buffer = deque(maxlen=buffer_lines)
-# just for safety precaution, we don't want to buffer overflow in case header tags are missing
-header = deque(maxlen=20)
-setup = deque(maxlen=20)
-
-socket_process = None
-series_no = 0
 
 
-def write_to_buffers(line):
+class Brain:
+    def __init__(self, name):
+        self.name = name
+        self.header_open = False
+        self.setup_open = False
+        self.header_sequence = -1
+        self.header = deque(maxlen=20)
+        self.setup = deque(maxlen=20)
+        self.series_no = 0
+        self.last_response = dt.now().timestamp()
 
-    if header_open:
-        header.append(line)
-    if setup_open:
-        setup.append(line)
-    if globals_open:
-        print("globals open WIP")
+    def handle_lines(self, line):
+        self.__filter_keywords(line)
+        if self.header_open:
+            self.header.append(line)
+        if self.setup_open:
+            self.setup.append(line)
 
-    buffer.append(line)
+    def __reset_flags(self):
+        self.header_open = True
+        self.setup_open = False
+        self.header_sequence = 0
+        self.header.clear()
+        self.setup.clear()
 
+    def __filter_keywords(self, line):
+        for i, keyword in enumerate(header_keywords):
+            if match(keyword, line) is not None:
+                self.header_open = not bool(i)
+                if self.header_open:
+                    print("incrementing header_sequence")
+                    self.header_sequence += 1
+                return
 
-def reset_logger_flags():
-    global header_open, setup_open, globals_open
-    header_open = True
-    setup_open = False
-    globals_open = False
+        for i, keyword in enumerate(setup_keywords):
+            if match(keyword, line) is not None:
+                self.setup_open = not bool(i)
+                return
 
 
 def generate_log_name():
-    date = datetime.now()
+    date = dt.now()
     date = date.strftime('%Y-%m-%d__%H_%M')
     return log_prefix + "__" + date + "__s_" + str(series_no) + ".txt"
 
 
+# return the brain object, or creates it if it's a new one
+def filter_brain(line):
+    if not match(brain_tag, line):
+        print("message received without braintag")
+        return None
+    line_split = split("_", line)
+
+    if len(line_split) > 1:
+        for brain in brains:
+            current_name = line_split[1]
+            if match(brain.name, current_name):
+                return brain
+        brain = Brain(current_name)
+        global brains
+        brains.append(brain)
+        return brain
+
+    return None
+
+
+# now needs to incoorperate all brain headers etc
 def create_log():
     final_dir = log_path + "/" + log_prefix
 
@@ -142,59 +174,23 @@ def create_log():
 
 
 def tag_character_present(line):
-    if re.match(tag_character, line) is not None:
+    if match(tag_character, line) is not None:
         # print("tagged line found")
         return True
-    elif re.match(legacy_character, line) is not None:
+    elif match(legacy_character, line) is not None:
         print()
         # print("WIP for backwards compatibility")
     return False
 
-'''
-class Arduino:
-    def __init__(self, name, s, trigger_state):
-        self.name = self.name
-        self.socket = self.s
-        self.last_response = datetime.now().timestamp()
-'''
 
+# WIP
+def check_timeouts():
+    for brain in brains:
+        print(brain)
 
-def filter_keywords(line):
-    keyword_found = False
-    global header_open, setup_open, globals_open, header_sequence
-
-    for i, keyword in enumerate(header_keywords):
-        if re.match(keyword, line) is not None:
-            header_open = not bool(i)
-            if header_open:
-                print("incrementing header_sequence")
-                header_sequence += 1
-            return
-
-    for i, keyword in enumerate(setup_keywords):
-        if re.match(keyword, line) is not None:
-            setup_open = not bool(i)
-            return
-
-    for i, keyword in enumerate(globals_keywords):
-        if re.match(keyword, line) is not None:
-            globals_open = not bool(i)
-            return
-
-    if re.match(event_call_keyword, line):
-        event_call(line)
-
-
-# expand this if you need multiple events
-def event_call(line):
-    print("eventcall, WIP")
-
-
+# depricated now
 def monitor(line):
 
-    global header_sequence
-    global last_response
-    last_response = datetime.now().timestamp()
     if type(line) is not str:
         line = line.decode()
     print(line)
@@ -211,63 +207,44 @@ def monitor(line):
         print("header: " + str(header_open) + " | Setup: " + str(setup_open) + " | globals: " + str(globals_open))
 
 
-def create_socket_client():
-    s = socket.socket()
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.settimeout(arduino_timeout)
-    try:
-        s.connect(('127.0.0.1', socket_port))
-    except socket.error as msg:
-        print('socket not found! \n exiting')
-        s.close()
-        return False
-
-    while True:
-        try:
-            line = s.recv(1024)
-            monitor(line)
-        except socket.timeout:
-            global header_sequence
-            header_sequence = 1
-            monitor('!!! Arduino did get stuck')
-            restart_arduino()
-            header_sequence = -1
-            sleep(1)
-            return False
-
-
 def restart_arduino():
-    print('restarting the arduino')
-    global socket_process
-    if socket_process is not None:
-        socket_process.kill()
-
-    socket_process = create_socket_server()
+    print("WIP till STB is defined, restart wont be serial anymore")
 
 
-def create_socket_server():
-    try:
-        os.chdir(script_dir)
-        proc = subprocess.Popen(["python3", "usbSocketServer.py"])
-    except subprocess.CalledProcessError as e:
-        print('failure to launch usb_socket.py')
-        print(e)
-        exit()
-    sleep(1)
-    return proc
+def handle_serial(lines):
+    global buffer
+    buffer.append(*lines)
+    for line in lines:
+        brain = filter_brain(line)
+        if brain is not None:
+            return
+        brain.handle_line(line)
 
 
-def main():
+def handle_cmds(lines):
+    print(lines)
 
-    restart_arduino()
+
+# use
+# if type(line) is not str:
+#         line = line.decode()
+# in case the lines is a bit garbled or contains /*
+def run_logger(cmd_port=None):
+    global cmd_socket
+    if cmd_port is not None:
+        cmd_socket = SocketClient('127.0.0.1', cmd_port)
 
     while True:
-        create_socket_client()
-        reset_logger_flags()
+        serial_lines = serial_socket.read_buffer()
+        if serial_lines is not None:
+            continue
+        handle_serial(serial_lines)
+        if cmd_socket is not None:
+            handle_cmds(cmd_socket.read_buffer())
         sleep(0.1)
 
 
 # allows me to import into test.py without running the main to test functions
 if __name__ == "__main__":
-    main()
+    run_logger(12346)
 

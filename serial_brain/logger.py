@@ -20,6 +20,7 @@ from serial_brain.socket_client import SocketClient
 
 '''
 Todo: 
+- check headersequences
 - adding of timestamps?
 - pass a parameter to run logging without restart??
 - detect nonresponsive arduino after a while
@@ -27,9 +28,13 @@ Todo:
 
 - ~~dump triggered from gamemaster?~~ 
 
+void brainPrint(char* msg) {
+    Serial.println(brain_name + ": " + msg);
+}
+
 '''
 
-serial_socket = SocketClient('127.0.0.1', 12346)
+serial_socket = SocketClient('127.0.0.1', 12345)
 
 # debug flags and other things that may be modified
 debug_mode = False
@@ -82,12 +87,17 @@ class Brain:
         self.series_no = 0
         self.last_response = dt.now().timestamp()
 
-    def handle_lines(self, line):
+    def handle_line(self, line):
+        print("{} is handling line: {}".format(self.name, line))
         self.__filter_keywords(line)
         if self.header_open:
             self.header.append(line)
         if self.setup_open:
             self.setup.append(line)
+        print("header sequence is {}".format(self.header_sequence))
+        if self.header_sequence > 0:
+            create_log(self.name)
+            self.__reset_flags()
 
     def __reset_flags(self):
         self.header_open = True
@@ -111,34 +121,18 @@ class Brain:
                 return
 
 
-def generate_log_name():
+def generate_log_name(brain_name):
     date = dt.now()
     date = date.strftime('%Y-%m-%d__%H_%M')
-    return log_prefix + "__" + date + "__s_" + str(series_no) + ".txt"
-
-
-# return the brain object, or creates it if it's a new one
-def filter_brain(line):
-    if not match(brain_tag, line):
-        print("message received without braintag")
-        return None
-    line_split = split("_", line)
-
-    if len(line_split) > 1:
-        for brain in brains:
-            current_name = line_split[1]
-            if match(brain.name, current_name):
-                return brain
-        brain = Brain(current_name)
-        global brains
-        brains.append(brain)
-        return brain
-
-    return None
+    log_name = log_prefix + "__" + date + "__"
+    if brain_name:
+        log_name = log_name + brain_name
+    log_name = log_name + ".txt"
+    return log_name
 
 
 # now needs to incoorperate all brain headers etc
-def create_log():
+def create_log(brain_name=""):
     final_dir = log_path + "/" + log_prefix
 
     if os.getcwd() is not log_path:
@@ -146,79 +140,91 @@ def create_log():
             os.makedirs(final_dir)
         os.chdir(final_dir)
 
-    name = generate_log_name()
+    name = generate_log_name(brain_name)
     print("creating " + name + " in folder " + final_dir)
 
     with io.open(name, "w+", encoding="utf-8") as file:
-        file.write("Header\n\n\n")
-        for line in header:
-            file.write(line + "\n")
-        file.write('\n\nsetup\n\n\n')
-        for line in setup:
-            file.write(line + "\n")
+
+        if brain_name:
+            file.write("crash has been detected in brain {}\n\n".format(brain_name))
+        file.write("setups of all brains:\n")
+        global brains
+        print("so many brains {}".format(len(brains)))
+        for brain in brains:
+            file.write("=== Setup of brain {} ===\n".format(brain.name))
+
+            file.write("Header\n")
+            for line in brain.header:
+                file.write(line + "\n")
+            file.write('\nsetup\n')
+            for line in brain.setup:
+                file.write(line + "\n")
+
         file.write("\n\nBuffer before crash\n\n\n")
         for line in buffer:
             file.write(line + "\n")
-        file.write('\n\n\nEND')
+        file.write('\n\n\nEND OF LOG')
         file.close()
-
-    buffer.clear()
-    # we could add this to the next one too
-    # write_to_buffers(line)
-    setup.clear()
-    header.clear()
-    global header_sequence, series_no
-    header_sequence = 0
-    series_no += 1
-    reset_logger_flags()
-
-
-def tag_character_present(line):
-    if match(tag_character, line) is not None:
-        # print("tagged line found")
-        return True
-    elif match(legacy_character, line) is not None:
-        print()
-        # print("WIP for backwards compatibility")
-    return False
 
 
 # WIP
 def check_timeouts():
     for brain in brains:
-        print(brain)
-
-# depricated now
-def monitor(line):
-
-    if type(line) is not str:
-        line = line.decode()
-    print(line)
-    write_to_buffers(line)
-
-    if tag_character_present(line):
-        filter_keywords(line)
-
-        if header_sequence > 0:
-            print("!restart event detected, triggering Log generation")
-            create_log()
-
-    if debug_mode == 2:
-        print("header: " + str(header_open) + " | Setup: " + str(setup_open) + " | globals: " + str(globals_open))
+        print("WIP brain timeout")
 
 
-def restart_arduino():
+# move to brain? not really its predefined???
+def restart_brain():
     print("WIP till STB is defined, restart wont be serial anymore")
+
+
+# return the brain object, or creates it if it's a new one
+def filter_brain(line):
+    if not match(brain_tag, line):
+        print("message received without braintag")
+        return None
+    line_split = split("_", line, maxsplit=1)
+
+    # think this trough, i don't want missed tags
+    if len(line_split) > 1:
+        splitted = split(":", line_split[1], maxsplit=1)
+        current_name = splitted[0]
+        if len(splitted) > 1:
+            line = splitted[1].strip()
+        if not current_name:
+            return None
+
+        global brains
+        print("filterbrain")
+        print(current_name)
+        for brain in brains:
+            print(brain.name)
+            if match(brain.name, current_name):
+                brain.handle_line(line)
+                return brain
+        brain = Brain(current_name)
+        brains.append(brain)
+        print("\n\n")
+        return brain
+
+    return None
 
 
 def handle_serial(lines):
     global buffer
-    buffer.append(*lines)
+
+    '''
+    print("\n\n\n buffer content:")
+    for line in buffer:
+        print(line)
+    '''
+
     for line in lines:
-        brain = filter_brain(line)
-        if brain is not None:
-            return
-        brain.handle_line(line)
+        buffer.append(line)
+        print(line)
+        if line:
+            print("received line {}".format(line))
+            filter_brain(line)
 
 
 def handle_cmds(lines):
@@ -236,9 +242,9 @@ def run_logger(cmd_port=None):
 
     while True:
         serial_lines = serial_socket.read_buffer()
-        if serial_lines is not None:
-            continue
-        handle_serial(serial_lines)
+        if len(serial_lines) > 0:
+            print("serial lines {}".format(serial_lines))
+            handle_serial(serial_lines)
         if cmd_socket is not None:
             handle_cmds(cmd_socket.read_buffer())
         sleep(0.1)
@@ -246,5 +252,6 @@ def run_logger(cmd_port=None):
 
 # allows me to import into test.py without running the main to test functions
 if __name__ == "__main__":
-    run_logger(12346)
+    run_logger()
+    # run_logger(12346)
 

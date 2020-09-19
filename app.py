@@ -31,11 +31,14 @@ ImportError: cannot import name 'dump_csp_header' when launching from terminal o
 https://stackoverflow.com/questions/60156202/flask-app-wont-launch-importerror-cannot-import-name-cached-property-from-w
 
 
+- socket cleanup https://stackoverflow.com/questions/409783/socket-shutdown-vs-socket-close
 - clear up questions for future requirements to make sure
 the interpreter wont need to run exceptions
 - customized and colourized button status buttons inside json
 - add frontendaction report to (both?) logs aswell, having both requires a modification to the seriallogger
 - collapsible elements?
+- import socket ip and port as cfg? its used multiple times so best define it properly
+
 
 - Verify double post of hidden elements is not causing problems?
 post returned: ImmutableMultiDict([('relayOverride_0', 'on'), ('relayOverride_0', '')])
@@ -44,6 +47,10 @@ aswell as return the value of the last key duplicate so for our application we'r
 all the work backend so far, if that changes we know how to do deal with duplicates.
 
 - rename set_relay ad set_ovpyterride to flip? maybe differentiation here with another func?
+
+# may be useful to monitor processes for restarts? Pkill python may not be the most elegant solution
+proc = subprocess.Popen(["python3", "usbSocketServer.py"])
+socket_process.kill()
 '''
 
 

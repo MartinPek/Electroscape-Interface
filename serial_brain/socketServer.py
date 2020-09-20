@@ -33,7 +33,6 @@ class SocketServer:
             client, address = self.sock.accept()
             self.clients.append(client)
             print('Got connection from', address)
-            client.send(b'hello there, you will be listening to the Arduino\n')
 
     def transmit(self, line):
         line = line.encode()

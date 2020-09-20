@@ -192,6 +192,8 @@ class STB:
         self.GPIO.output(relay.output, relay.status)
         self.__log_action("User {} has flipped {} status to {}".format(
             self.user, relay.name, not status, status))
+        # takes the cake for the unsexiest variable
+        cmd_socket.transmit("!log: {}".format(self.brains[relay.brain_association].name))
 
     def restart_brain(self, part_index, value, test):
         try:
@@ -209,7 +211,7 @@ class STB:
 
     def __log_action(self, message):
         self.__add_serial_lines([message])
-        print(message)
+        cmd_socket.transmit(message)
 
     def extend_relays(self, *_):
         self.extended_relays = True
@@ -248,8 +250,7 @@ class STB:
                     if self.extended_relays or not relay.hidden:
                         self.__log_action(relay_msg)
                     else:
-                        print()
-                        # TODO: add to the logger
+                        cmd_socket.transmit(relay_msg)
 
                     self.updates.insert(0, [relay_no, relay.status_frontend, relay.btn_clr_frontend])
         self.__add_serial_lines(["counter is at {}".format(counter)])

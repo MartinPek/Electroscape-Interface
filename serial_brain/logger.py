@@ -229,9 +229,11 @@ def handle_serial(lines):
 
 
 def handle_cmds(lines):
-    if not len(lines) > 0:
-        return
-    print("received cmd form frontend: {}".format(lines))
+    if lines or len(lines) > 0:
+        print("received cmd form frontend: {}".format(lines))
+        for line in lines:
+            line = "Frontend: ".format(line)
+            buffer.append(line)
 
 
 # use

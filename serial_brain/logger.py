@@ -47,6 +47,7 @@ try:
         cfg = json.loads(json_file.read())
         baud = cfg["baud"]
         log_prefix = cfg["log_prefix"]
+        cmd_port = cfg["cmd_port"]
 
         if debug_mode:
             log_path = os.path.join(script_dir, "testlogs/more logs/more logs")
@@ -228,7 +229,9 @@ def handle_serial(lines):
 
 
 def handle_cmds(lines):
-    print(lines)
+    if not len(lines) > 0:
+        return
+    print("received cmd form frontend: {}".format(lines))
 
 
 # use
@@ -252,6 +255,6 @@ def run_logger(cmd_port=None):
 
 # allows me to import into test.py without running the main to test functions
 if __name__ == "__main__":
-    run_logger()
+    run_logger(cmd_port)
     # run_logger(12346)
 

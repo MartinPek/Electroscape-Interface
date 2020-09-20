@@ -15,8 +15,8 @@ class SocketClient:
     def __connect(self):
         try:
             self.s.connect((self.ip, self.port))
+            print("client has connected to {}:{}".format(self.ip, self.port))
         except socket.error as msg:
-            print('socket not found! \n exiting')
             self.s.close()
             return False
         return True
@@ -41,12 +41,13 @@ class SocketClient:
             s.settimeout(self.timeout)
             self.s = s
             while True:
+                print('socket client looking for connection')
                 if not self.__connect():
+                    sleep(1)
                     break
                 while self.__received():
                     pass
-                sleep(1)
-            
+
     def read_buffer(self):
         ret = self.buffer
         self.buffer = []

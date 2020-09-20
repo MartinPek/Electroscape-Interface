@@ -2,7 +2,7 @@ from random import random
 import json
 from datetime import datetime as dt
 from serial_brain.socket_client import SocketClient
-from socketServer import SocketServer
+from serial_brain.socketServer import SocketServer
 
 # TODO:
 '''
@@ -127,7 +127,7 @@ class STB:
 
         global serial_socket, cmd_socket
         serial_socket = SocketClient('127.0.0.1', serial_port)
-        # cmd_socket = SocketClient('127.0.0.1', cmd_port)
+        cmd_socket = SocketServer(cmd_port)
 
         for i, relay in enumerate(relays):
             relay_data = relay + pins_IO[i] + [i]
@@ -194,8 +194,12 @@ class STB:
             self.user, relay.name, not status, status))
 
     def restart_brain(self, part_index, value, test):
-        # Todo
-        print("restart_brain is WIP till we get RS485 communication ")
+        try:
+            brain = self.brains[part_index]
+            print("attempting to restart brain {}".format(brain.name))
+            cmd_socket.transmit("!log: {}".format(brain.name))
+        except IndexError:
+            print("Invalid brain selection on restart_brain: {}".format(part_index))
 
     # *_ dumps unused variables
     def login(self, *args):

@@ -2,12 +2,11 @@ from random import random
 import json
 from datetime import datetime as dt
 from serial_brain.socket_client import SocketClient
+from socketServer import SocketServer
 
 # TODO:
 '''
-make logger imported so i can add the frontend information to the log? have it still run 
-parallel to avoid crashes of the frontend affecting the log
-log received relay actions aswell
+log receiving relay actions aswell
 '''
 
 rpi_env = True
@@ -261,14 +260,8 @@ def cleanup(self):
 
 # https://www.shanelynn.ie/asynchronous-updates-to-a-webpage-with-flask-and-socket-io/
 # https://flask-socketio.readthedocs.io/en/latest/
-
+# following didnt work iirc
 # https://realpython.com/flask-by-example-implementing-a-redis-task-queue/
-
-# https://docs.python.org/3/whatsnew/3.8.html#asyncio
-# https://www.youtube.com/watch?v=LYTiaSXso_4
-# start async first do async.run(fnc_name)
-# run parallel?
-# async.gather(fn1, fn2, fn3)
 
 
 # just here fore testing when running stb.py, usually this is imported

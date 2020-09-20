@@ -3,7 +3,6 @@
 
 '''
 Todo:
-make this importable and useable by the stb.py
 fringe case where we dont restart the pi with the socket....
 OSError: [Errno 98] Address already in use
 https://stackoverflow.com/questions/6380057/python-binding-socket-address-already-in-use
@@ -45,7 +44,3 @@ class SocketServer:
                 print("Socket transmission Error: {}".format(msg))
                 print("a client dropped")
                 self.clients.remove(client)
-
-
-if __name__ == '__main__':
-    SocketServer()

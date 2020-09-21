@@ -206,7 +206,9 @@ class STB:
     # *_ dumps unused variables
     def login(self, *args):
         user = args[1]
-        print("loggig in user {}".format(user))
+        msg = "loggig in user {}".format(user)
+        print(msg)
+        cmd_socket.transmit("!login: ".format(msg))
         self.user = user
 
     def __log_action(self, message):

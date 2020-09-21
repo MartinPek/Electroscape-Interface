@@ -27,6 +27,9 @@
 
 '''
 TODO:
+line splitting for the socket
+adjust timeouts for logger, mby ping here?
+
 ImportError: cannot import name 'dump_csp_header' when launching from terminal only
 https://stackoverflow.com/questions/60156202/flask-app-wont-launch-importerror-cannot-import-name-cached-property-from-w
 
@@ -151,7 +154,7 @@ def updater():
             if len(stb.serial_updates) > 0:
                 socketio.emit('serial_update', {'lines': stb.serial_updates}, namespace='/test', broadcast=True)
                 stb.serial_updates = []
-            socketio.sleep(0.1)
+            socketio.sleep(5)
     finally:
         stb.cleanup()
 

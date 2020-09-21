@@ -76,7 +76,6 @@ serial_socket = SocketClient('127.0.0.1', serial_port)
 cmd_socket = None
 buffer = deque(maxlen=buffer_lines)
 
-
 class Brain:
     def __init__(self, name):
         self.name = name
@@ -227,20 +226,53 @@ def handle_serial(lines):
             print("received line {}".format(line))
             filter_brain(line)
 
+# fnc to be called via the stb
 
-def handle_cmds(lines):
-    if lines or len(lines) > 0:
+
+def user_login(user_name):
+    print("userlogin {}".format(user_name))
+
+
+def reset_all(*_):
+    # Todo: decide on how we reset brains and not log them? have a seperate restartall?
+    print("resetall cmd")
+
+
+commands = {
+    "!log": create_log,
+    "!login": user_login,
+    "!reset_all": reset_all
+}
+
+
+def handle_stb(lines):
+    if lines:
         print("received cmd form frontend: {}".format(lines))
         for line in lines:
-            line = "Frontend: ".format(line)
+            print("checking cmd tag with {}".format(line))
             buffer.append(line)
+            if match("!", line):
+                print("found command tag")
+                handle_cmd(line)
 
+
+def handle_cmd(line):
+    print("interpreting command")
+    for cmd in commands.keys():
+        if match(cmd, line):
+            try:
+                _, value = split(":", line, 1)
+                # remove left whitespace
+                value = value.lstrip()
+            except ValueError:
+                value = line
+            commands[cmd](value)
 
 # use
 # if type(line) is not str:
 #         line = line.decode()
 # in case the lines is a bit garbled or contains /*
-def run_logger(cmd_port=None):
+def run_logger():
     global cmd_socket
     if cmd_port is not None:
         cmd_socket = SocketClient('127.0.0.1', cmd_port)
@@ -251,12 +283,11 @@ def run_logger(cmd_port=None):
             print("serial lines {}".format(serial_lines))
             handle_serial(serial_lines)
         if cmd_socket is not None:
-            handle_cmds(cmd_socket.read_buffer())
+            handle_stb(cmd_socket.read_buffer())
         sleep(0.1)
 
 
 # allows me to import into test.py without running the main to test functions
 if __name__ == "__main__":
-    run_logger(cmd_port)
-    # run_logger(12346)
+    run_logger()
 

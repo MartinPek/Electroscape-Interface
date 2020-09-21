@@ -1,17 +1,17 @@
 {
-  "Room_name": "Galerie Test",
+  "Room_name": "Hofman Test",
   "Relays are Name, Active High, Auto, Hidden, BrainNo (Physical stuff is Indexed from 1)": "",
   "Relays": [
-    ["Licht R1 (hidden)", true, true, true, 1],
-    ["Kamin", true, true, false, 1],
-    ["UV-Licht", true, true, false, 1],
-    ["Licht R2", true, true, false, 1],
-    ["Exit1", true, true, false, 1],
-    ["Exit2", true, true, false, 1],
-    ["Exit3", true, true, false, 1],
-    ["Exit4", true, true, false, 1]
+    ["Keypad", true, true, false, 1],
+    ["Lüfter (klein, abluft)", true, true, true, 1],
+    ["Lüfter (groß, abluft)", true, true, true, 1],
+    ["Lüfter (klein, zufuhr)", true, true, true, 1],
+    ["RPi Video", true, true, false, 1],
+    ["Reinraum Light", true, true, false, 1],
+    ["Pneumatiktür", true, true, false, 1],
+    ["Alarmleuchten", true, true, true, 1]
   ],
-  "Brains": ["Keypads", "Skulpturen", "Exit"],
+  "Brains": ["Keypads", "Skulpturen", "Exit", "Sicherung"],
   "Pins_IO": [
     [16, 4],
     [17, 5],

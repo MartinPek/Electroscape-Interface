@@ -35,6 +35,7 @@ class SocketServer:
             print('Got connection from', address)
 
     def transmit(self, line):
+        line = line.rstrip() + "\n"
         line = line.encode()
         for client in self.clients:
             try:

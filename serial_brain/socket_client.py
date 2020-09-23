@@ -23,10 +23,10 @@ class SocketClient:
 
     def __received(self):
         try:
-            line = self.s.recv(1024)
-            if type(line) is not str:
-                line = line.decode()
-                if line:
+            lines = self.s.recv(1024)
+            if type(lines) is not str:
+                for line in lines.splitlines():
+                    line = line.decode()
                     # Todo: buffer overflow? mby have a ringbuffer? limited size?
                     self.buffer.append(line)
                     print(line)

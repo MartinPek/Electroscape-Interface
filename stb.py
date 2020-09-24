@@ -160,7 +160,7 @@ class STB:
             else:
                 pud = GPIO.PUD_UP
             GPIO.setup(relay.input, GPIO.IN, pull_up_down=pud)
-            GPIO.setup(relay.output, GPIO.OUT, pull_up_down=pud)
+            GPIO.setup(relay.output, GPIO.OUT)
 
         return GPIO
 

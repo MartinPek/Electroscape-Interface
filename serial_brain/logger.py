@@ -3,16 +3,12 @@
 # Serial Data logger for Rpi and Arduino
 
 import json
-import re
 from re import split, match
 from collections import deque
 from datetime import datetime as dt
 from time import sleep
 import os
 import io
-import subprocess
-import socket
-from io import BytesIO
 from serial_brain.socket_client import SocketClient
 
 
@@ -76,12 +72,13 @@ serial_socket = SocketClient('127.0.0.1', serial_port)
 cmd_socket = None
 buffer = deque(maxlen=buffer_lines)
 
+
 class Brain:
     def __init__(self, name):
         self.name = name
         self.header_open = False
         self.setup_open = False
-        self.header_sequence = -1
+        self.header_sequence = 0
         self.header = deque(maxlen=20)
         self.setup = deque(maxlen=20)
         self.series_no = 0
@@ -169,8 +166,11 @@ def create_log(brain_name=""):
 
 # WIP
 def check_timeouts():
+    now = dt.now().timestamp()
     for brain in brains:
-        print("WIP brain timeout")
+        if now - brain.last_response > arduino_timeout:
+            print("brain {} timed out restart is WIP since PINs need TBD".format(brain.name))
+        brain.last_response = arduino_timeout
 
 
 # move to brain? not really its predefined???
@@ -267,6 +267,7 @@ def handle_cmd(line):
             except ValueError:
                 value = line
             commands[cmd](value)
+
 
 # use
 # if type(line) is not str:

@@ -79,13 +79,14 @@ class Relay:
 
 
 class Brain:
-    def __init__(self, name, relays, brain_no):
+    def __init__(self, name, relays, brain_no, reset_pin):
         self.name = name
         associated_relays = []
         for relay in relays:
             if relay.brain_association == brain_no + 1:
                 associated_relays.append(relay)
         self.associated_relays = associated_relays
+        self.reset_pin = reset_pin
 
 
 class STB:
@@ -133,8 +134,9 @@ class STB:
             relay_data = relay + pins_IO[i] + [i]
             relays[i] = Relay(*relay_data)
 
-        for i, brain in enumerate(brains):
-            brains[i] = Brain(brain, relays, i)
+        for i, brain_data in enumerate(brains):
+            brain, reset_pin = brain_data
+            brains[i] = Brain(brain, relays, i, reset_pin)
 
         settings = Settings(room_name, master_reset, serial_limit)
         return settings, relays, brains

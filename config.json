@@ -11,7 +11,7 @@
     ["Pneumatiktür", true, true, false, 1],
     ["Alarmleuchten", true, true, true, 1]
   ],
-  "Brains": ["Keypads", "Skulpturen", "Exit", "Sicherung"],
+  "Brains": [["Keypads", 24], ["Skulpturen", 25], ["Exit", 26], ["Sicherung", 27]],
   "Pins_IO": [
     [16, 4],
     [17, 5],

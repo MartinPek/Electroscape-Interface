@@ -27,7 +27,10 @@
 
 '''
 TODO:
-line splitting for the socket
+
+Questions:
+Where to take the starttime from for CSV?
+
 adjust timeouts for logger, mby ping here?
 
 ImportError: cannot import name 'dump_csp_header' when launching from terminal only

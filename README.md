@@ -1,5 +1,15 @@
 web_stb_override
 
+## common inssues
+#### Socket-IO
+ImportError: No module named socketio
+
+ -> Delete the VEnv is 99% the culprit
+
+https://github.com/miguelgrinberg/Flask-SocketIO/issues/164
+https://github.com/miguelgrinberg/Flask-SocketIO/issues/1105
+another issue that existed but got fixed by the provided requirements, pinning the Werkzeug==0.16.1 
+https://github.com/jarus/flask-testing/issues/143
 
 ## for development on a PC
 - it will run without GPIOs or emulator

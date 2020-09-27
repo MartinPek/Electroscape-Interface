@@ -19,7 +19,7 @@ rpi_env = True
 bool_dict = {"on": True, "off": False}
 serial_socket = None
 cmd_socket = None
-counter = 0
+# counter = 0
 
 
 class Settings:
@@ -234,19 +234,15 @@ class STB:
 
     # reads and updates the STB and sets/mirrors states
     def update_stb(self):
-        global counter
-        counter += 1
         print("update_stb")
         print("adding some random fake updates")
         
         for relay_no, relay in enumerate(self.relays):
             # auto = true, manual = false
             if relay.auto:
-                # new_status = bool(self.GPIO.input(relay.input))
-                new_status = bool(round(random()))
-                new_status = False
-                print("mirroring relay {}".format(relay.index))
-                self.GPIO.output(relay.output, relay.status)
+                new_status = bool(self.GPIO.input(relay.input))
+                # new_status = bool(round(random()))
+                # new_status = False
 
                 if new_status != relay.status:
                     relay.set_status(new_status)
@@ -255,9 +251,10 @@ class STB:
                         self.__log_action(relay_msg)
                     else:
                         cmd_socket.transmit(relay_msg)
-
                     self.updates.insert(0, [relay_no, relay.status_frontend, relay.btn_clr_frontend])
-        self.__add_serial_lines(["counter is at {}".format(counter)])
+                self.GPIO.output(relay.output, relay.status)
+
+        # self.__add_serial_lines(["counter is at {}".format(counter)])
         ser_lines = serial_socket.read_buffer()
         if ser_lines is not None:
             ser_lines = reversed(ser_lines)

@@ -157,7 +157,7 @@ def updater():
             if len(stb.serial_updates) > 0:
                 socketio.emit('serial_update', {'lines': stb.serial_updates}, namespace='/test', broadcast=True)
                 stb.serial_updates = []
-            socketio.sleep(5)
+            # socketio.sleep(0.05)
     finally:
         stb.cleanup()
 

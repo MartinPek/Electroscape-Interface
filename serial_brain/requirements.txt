@@ -3,5 +3,5 @@
 # from the main logger files
 serial
 glob
-socket
+# socket
 threading

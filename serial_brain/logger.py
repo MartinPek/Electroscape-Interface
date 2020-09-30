@@ -14,7 +14,17 @@ try:
 except ModuleNotFoundError:
     from socket_client import SocketClient
 
-
+try:
+    import RPi.GPIO as GPIO
+    print("Running on RPi")
+    GPIO.setmode(GPIO.BCM)
+except (RuntimeError, ModuleNotFoundError):
+    print("Running without GPIOs on non Pi ENV / non RPi.GPIO installed machine")
+    from fakeRPiGPIO import GPIO
+    GPIO.VERBOSE = False
+except OSError as e:
+    print("sth went terribly wrong with GPIO import \n{}".format(e))
+    exit()
 
 
 '''

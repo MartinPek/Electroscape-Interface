@@ -201,7 +201,7 @@ class STB:
         try:
             brain = self.brains[part_index]
             print("attempting to restart brain {}".format(brain.name))
-            cmd_socket.transmit("!log: {}".format(brain.name))
+            cmd_socket.transmit("!reset_brain: {}".format(brain.name))
         except IndexError:
             print("Invalid brain selection on restart_brain: {}".format(part_index))
 
@@ -260,9 +260,8 @@ class STB:
             ser_lines = reversed(ser_lines)
             self.__add_serial_lines(ser_lines)
 
-
-def cleanup(self):
-    self.GPIO.cleanup()
+    def cleanup(self):
+        self.GPIO.cleanup()
 
 # https://www.shanelynn.ie/asynchronous-updates-to-a-webpage-with-flask-and-socket-io/
 # https://flask-socketio.readthedocs.io/en/latest/

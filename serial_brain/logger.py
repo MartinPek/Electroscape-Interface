@@ -29,21 +29,17 @@ except OSError as e:
 
 '''
 Todo: 
-- check headersequences
 - adding of timestamps?
 - pass a parameter to run logging without restart??
 - detect nonresponsive arduino after a while
 - verfiy traffic limits of this, dunno if that is too much traffic potentially
 
-- ~~dump triggered from gamemaster?~~ 
-
+for usage inside the arduinocode simply define brain_name and 
 void brainPrint(char* msg) {
     Serial.println(brain_name + ": " + msg);
 }
 
 '''
-
-serial_socket = SocketClient('127.0.0.1', 12345)
 
 # debug flags and other things that may be modified
 debug_mode = False
@@ -76,18 +72,17 @@ try:
         serial_port = cfg["serial_port"]
         arduino_timeout = cfg["arduino_timeout"]
         brain_tag = cfg["brain_tag"]
+    with open('../config.json') as json_file:
+        cfg = json.loads(json_file.read())
+        brains = cfg["Brains"]
 except ValueError as e:
-    print('failure to read serial_config.json')
+    print('failure to read config files')
     print(e)
     exit()
 
-serial_socket = SocketClient('127.0.0.1', serial_port)
-cmd_socket = None
-buffer = deque(maxlen=buffer_lines)
-
 
 class Brain:
-    def __init__(self, name):
+    def __init__(self, name, pin):
         self.name = name
         self.header_open = False
         self.setup_open = False
@@ -96,6 +91,8 @@ class Brain:
         self.setup = deque(maxlen=20)
         self.series_no = 0
         self.last_response = dt.now().timestamp()
+        self.pin = pin
+        self.__init_brain_gpio()
 
     def handle_line(self, line):
         print("{} is handling line: {}".format(self.name, line))
@@ -129,6 +126,17 @@ class Brain:
             if match(keyword, line) is not None:
                 self.setup_open = not bool(i)
                 return
+
+    def __init_brain_gpio(self):
+        GPIO.setup(self.pin, GPIO.OUT)
+
+
+serial_socket = SocketClient('127.0.0.1', serial_port)
+if cmd_port:
+    cmd_socket = SocketClient('127.0.0.1', cmd_port)
+else:
+    cmd_port = None
+buffer = deque(maxlen=buffer_lines)
 
 
 def generate_log_name(brain_name):
@@ -186,11 +194,6 @@ def check_timeouts():
         brain.last_response = arduino_timeout
 
 
-# move to brain? not really its predefined???
-def restart_brain():
-    print("WIP till STB is defined, restart wont be serial anymore")
-
-
 # return the brain object, or creates it if it's a new one
 def filter_brain(line):
     if not match(brain_tag, line):
@@ -239,7 +242,7 @@ def handle_serial(lines):
             print("received line {}".format(line))
             filter_brain(line)
 
-# fnc to be called via the stb
+# --- fncs to be called via the stb
 
 
 def user_login(user_name):
@@ -256,7 +259,6 @@ def restart_all(*_):
     # Todo: decide on how we reset brains and not log them? have a seperate restartall?
     for brain in brains:
         GPIO.output(brain.pin, True)
-    sleep(1)
     print("resetall cmd")
 
 
@@ -292,23 +294,26 @@ def handle_cmd(line):
             commands[cmd](value)
 
 
+# initializing the brains
+for i, brain in enumerate(brains):
+    brains[i] = Brain(*brain)
+
+
 # use
 # if type(line) is not str:
 #         line = line.decode()
 # in case the lines is a bit garbled or contains /*
 def run_logger():
-    global cmd_socket
-    if cmd_port is not None:
-        cmd_socket = SocketClient('127.0.0.1', cmd_port)
-
-    while True:
-        serial_lines = serial_socket.read_buffer()
-        if len(serial_lines) > 0:
-            print("serial lines {}".format(serial_lines))
-            handle_serial(serial_lines)
-        if cmd_socket is not None:
-            handle_stb(cmd_socket.read_buffer())
-        sleep(0.1)
+    try:
+        while True:
+            serial_lines = serial_socket.read_buffer()
+            if len(serial_lines) > 0:
+                print("serial lines {}".format(serial_lines))
+                handle_serial(serial_lines)
+            if cmd_socket is not None:
+                handle_stb(cmd_socket.read_buffer())
+    finally:
+        GPIO.cleanup()
 
 
 # allows me to import into test.py without running the main to test functions

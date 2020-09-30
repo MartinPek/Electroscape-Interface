@@ -7,6 +7,7 @@ from re import split, match
 from collections import deque
 from datetime import datetime as dt
 from time import sleep
+from threading import Thread
 import os
 import io
 try:
@@ -129,6 +130,7 @@ class Brain:
 
     def __init_brain_gpio(self):
         GPIO.setup(self.pin, GPIO.OUT)
+        GPIO.output(self.pin, False)
 
 
 serial_socket = SocketClient('127.0.0.1', serial_port)
@@ -251,15 +253,32 @@ def user_login(user_name):
 
 # move to brain? not really its predefined???
 def restart_brain(brain_name):
-    print("WIP till STB is defined, restart wont be serial anymore")
+    for brain in brains:
+        if match(brain.name, brain_name):
+            thread = Thread(target=flip_and_wait, args=([brain.pin], ))
+            thread.start()
+            return
 
 
 # *_ dumps all parameters
 def restart_all(*_):
     # Todo: decide on how we reset brains and not log them? have a seperate restartall?
+    pins = []
     for brain in brains:
-        GPIO.output(brain.pin, True)
+        pins.append(brain.pin)
+    thread = Thread(target=flip_and_wait, args=(pins, ))
+    thread.start()
     print("resetall cmd")
+
+
+# we want to keep logging other stuff so here's a function to thread
+def flip_and_wait(pins):
+    print("flip {} {}".format(type(pins), pins))
+    for pin in pins:
+        GPIO.output(pin, True)
+    sleep(0.5)
+    for pin in pins:
+        GPIO.output(pin, False)
 
 
 commands = {

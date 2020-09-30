@@ -9,7 +9,10 @@ from datetime import datetime as dt
 from time import sleep
 import os
 import io
-from serial_brain.socket_client import SocketClient
+try:
+    from serial_brain.socket_client import SocketClient
+except ModuleNotFoundError:
+    from socket_client import SocketClient
 
 
 
@@ -233,15 +236,25 @@ def user_login(user_name):
     print("userlogin {}".format(user_name))
 
 
-def reset_all(*_):
+# move to brain? not really its predefined???
+def restart_brain(brain_name):
+    print("WIP till STB is defined, restart wont be serial anymore")
+
+
+# *_ dumps all parameters
+def restart_all(*_):
     # Todo: decide on how we reset brains and not log them? have a seperate restartall?
+    for brain in brains:
+        GPIO.output(brain.pin, True)
+    sleep(1)
     print("resetall cmd")
 
 
 commands = {
     "!log": create_log,
     "!login": user_login,
-    "!reset_all": reset_all
+    "!reset_all": restart_all,
+    "!reset_brain": restart_brain
 }
 
 

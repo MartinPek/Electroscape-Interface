@@ -222,6 +222,7 @@ class STB:
         self.extended_relays = True
 
     def logout(self, *_):
+        cmd_socket.transmit("!logout: ".format(self.user))
         self.user = False
         self.extended_relays = False
 

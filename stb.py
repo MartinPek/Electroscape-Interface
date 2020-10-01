@@ -211,7 +211,7 @@ class STB:
         user = args[1]
         msg = "loggig in user {}".format(user)
         print(msg)
-        cmd_socket.transmit("!login: ".format(msg))
+        cmd_socket.transmit("!login: {}".format(user))
         self.user = user
 
     def __log_action(self, message):

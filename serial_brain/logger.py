@@ -45,6 +45,7 @@ void brainPrint(char* msg) {
 # debug flags and other things that may be modified
 debug_mode = False
 script_dir = os.getcwd()
+user = False
 brains = []
 # --- global const var from the config
 
@@ -167,6 +168,8 @@ def create_log(brain_name=""):
 
         if brain_name:
             file.write("crash has been detected in brain {}\n\n".format(brain_name))
+        if user:
+            file.write("crash happened while user {} was logged in".format(user))
         file.write("setups of all brains:\n")
         global brains
         print("so many brains {}".format(len(brains)))
@@ -248,7 +251,13 @@ def handle_serial(lines):
 
 
 def user_login(user_name):
-    print("userlogin {}".format(user_name))
+    global user
+    user = user_name
+
+
+def user_logout(_):
+    global user
+    user = False
 
 
 # move to brain? not really its predefined???
@@ -282,8 +291,9 @@ def flip_and_wait(pins):
 
 
 commands = {
-    "!log": create_log,
     "!login": user_login,
+    "!logout": user_logout,
+    "!log": create_log,
     "!reset_all": restart_all,
     "!reset_brain": restart_brain
 }
@@ -311,6 +321,7 @@ def handle_cmd(line):
             except ValueError:
                 value = line
             commands[cmd](value)
+            return
 
 
 # initializing the brains

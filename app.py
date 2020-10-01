@@ -94,7 +94,7 @@ def interpreter(immuteable):
     action_dict = {
         "relayOverride": stb.set_override,
         "relaySetStatus": stb.set_relay,
-        "restartBrain": stb.restart_brain,
+        "reset_room": stb.restart_all_brains,
         "login": stb.login,
         "extend_relays": stb.extend_relays,
         "logout": stb.logout

@@ -168,16 +168,9 @@ class STB:
 
     def set_override(self, relay_index, value, test):
         # do yourself a favour and dont pass values into html merely JS,
-        # converting bools into 3 different languages smeard into json is not fun
-        print("testval: {}".format(test))
+        # converting bools into 3 different languages smeared into json is not fun
+        # function only flips existing variable
         relay = self.relays[int(relay_index)]
-        '''
-        try:
-            value = not bool_dict[value]
-            relay.auto = value
-        except KeyError:
-            print("KEYERROR!")
-        '''
         relay.set_auto(not relay.auto)
         self.__log_action("User {} has set relay_no {} override to {}".format(
             self.user, relay.index, relay.auto))
@@ -197,13 +190,21 @@ class STB:
         # takes the cake for the unsexiest variable
         cmd_socket.transmit("!log: {}".format(self.brains[relay.brain_association].name))
 
-    def restart_brain(self, part_index, value, test):
+    def restart_all_brains(self, *_):
+        txt = "\n\nroom has been reset by user {}\n\n".format(self.user)
+        print(txt)
+        cmd_socket.transmit(txt)
+        cmd_socket.transmit("!reset_all")
+
+    def log_brain(self, part_index, *_):
         try:
             brain = self.brains[part_index]
             print("attempting to restart brain {}".format(brain.name))
-            cmd_socket.transmit("!reset_brain: {}".format(brain.name))
+            cmd_socket.transmit("!log: {}".format(brain.name))
         except IndexError:
             print("Invalid brain selection on restart_brain: {}".format(part_index))
+
+        print()
 
     # *_ dumps unused variables
     def login(self, *args):

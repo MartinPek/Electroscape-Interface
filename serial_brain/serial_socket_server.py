@@ -23,6 +23,7 @@ def handle_serial(ser):
             print("serial connection lost")
             return
         if line:
+            print(line)
             sock.transmit(line)
 
 
@@ -43,7 +44,7 @@ def read_serial(ser):
 
 def connect_serial():
     while True:
-        ports = glob('/dev/ttyUSB[0-9]')
+        ports = glob('/dev/ttyUSB[0-9]') + glob('/dev/serial0')
         for usb_port in ports:
             try:
                 ser = serial.Serial(usb_port, baud)

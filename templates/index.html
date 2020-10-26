@@ -103,10 +103,17 @@
 <br><h2>Room Reset</h2>
 <div id="Brains" class="control_section">
     <form method="POST" action="">
-        <button type="submit" class="button" name="reset_room" value="">RESET ROOM</button>
+        <button type="submit" onclick="return reset_confirm();" class="button" name="reset_room" value="">RESET ROOM</button>
     </form>
 
-    <!-- comments aren't strong enough apprently, the joy of webdeving -->
+    <script>
+        function reset_confirm() {
+           var ret = confirm("Do you really want Reset the room");
+           return ret;
+        }
+    </script>
+
+    <!-- comments aren't strong enough apparently, the joy of webdeving -->
     <script>/*
     <br><h2>Brain Restarts</h2>
     {% for brain in brains %}

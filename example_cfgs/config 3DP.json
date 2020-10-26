@@ -1,0 +1,28 @@
+{
+  "Room_name": "3D Drucker",
+  "Relays are Name, Active High, Auto, Hidden, BrainNo (Physical stuff is Indexed from 1)": "",
+  "Relays": [
+    ["Drucker", true, true, false, 1],
+    ["Lüfter", true, true, false, 1],
+    ["Kamera", true, true, false, 1],
+    ["Licht", true, true, false, 1],
+    ["Extra_1", true, true, true, 1],
+    ["Extra_2", true, true, true, 1],
+    ["Extra_3", true, true, true, 1],
+    ["Extra_4", true, true, true, 1]
+
+  ],
+  "Brains": [["Keypads", 24], ["Skulpturen", 25], ["Exit", 26], ["Sicherung", 27]],
+  "Pins_IO": [
+    [12, 4],
+    [16, 17],
+    [6, 27],
+    [13, 22],
+    [8, 23],
+    [9, 24],
+    [12, 25],
+    [11, 5]
+  ],
+  "Master_reset": 18,
+  "Serial_line_limit": 50
+}

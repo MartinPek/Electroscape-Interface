@@ -1,5 +1,14 @@
 web_stb_override
 
+## installation
+Since flask can defenitely get issues like the latter one 
+use a Venv
+
+move inside the project folder
+python3 -m venv venv
+source venv/bin/activate
+
+
 ## common inssues
 #### Socket-IO
 ImportError: No module named socketio

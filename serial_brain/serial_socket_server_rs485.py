@@ -1,7 +1,7 @@
 from socketServer import SocketServer
 import json
 from glob import glob
-import serial
+import serial.rs485
 from time import sleep
 
 try:
@@ -23,13 +23,15 @@ def handle_serial(ser):
             print("serial connection lost")
             return
         if line:
-            print(line)
+            # print(line)
             sock.transmit(line)
 
 
 def read_serial(ser):
     try:
-        line = str(ser.readline())[2:][:-5]
+        line = str(ser.readline())  #[2:][:-5]
+        # line = line.decode()
+        print(line)
         return line
     except ValueError as e:
         print("ValueError")
@@ -47,7 +49,7 @@ def connect_serial():
         ports = glob('/dev/ttyUSB[0-9]') + glob('/dev/serial0')
         for usb_port in ports:
             try:
-                ser = serial.Serial(usb_port, baud)
+                ser = serial.rs485.RS485(port=usb_port, baudrate=baud)
                 print("serial found!")
                 return ser
             except OSError as err:

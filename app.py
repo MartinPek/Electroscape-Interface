@@ -63,7 +63,6 @@ socket_process.kill()
 from stb import STB
 from flask import Flask, render_template, request
 from threading import Thread, Timer
-from time import time, sleep
 from flask_socketio import SocketIO, emit
 from re import split
 from werkzeug.utils import cached_property
@@ -146,6 +145,8 @@ def index():
 
 
 def updater():
+    # may need a second
+    socketio.sleep(5)
     try:
         while True:
             stb.update_stb()
@@ -157,7 +158,7 @@ def updater():
             if len(stb.serial_updates) > 0:
                 socketio.emit('serial_update', {'lines': stb.serial_updates}, namespace='/test', broadcast=True)
                 stb.serial_updates = []
-            # socketio.sleep(0.05)
+            socketio.sleep(0.1)
     finally:
         stb.cleanup()
 

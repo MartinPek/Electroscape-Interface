@@ -1,8 +1,13 @@
+# Author Martin Pek
+# 2CP - TeamEscape - Engineering
+
 from random import random
 import json
 from datetime import datetime as dt
 from serial_brain.socket_client import SocketClient
 from serial_brain.socketServer import SocketServer
+from pcf8574 import PCF8574
+from time import sleep
 
 # TODO:
 '''
@@ -23,10 +28,8 @@ cmd_socket = None
 
 
 class Settings:
-    def __init__(self, room_name, master_reset, serial_limit):
+    def __init__(self, room_name, serial_limit):
         self.room_name = room_name
-        # we may need and individual reset pin for each brain at some point
-        self.master_reset = master_reset
         self.is_rpi_env = True
         self.serial_limit = serial_limit
 
@@ -59,7 +62,7 @@ class Relay:
             self.btn_clr_frontend = "red"
         self.__set_frontend_status()
 
-    def __init__(self, name, active_high, auto, hidden, brain_association, intput_pin, output_pin, index):
+    def __init__(self, name, active_high, auto, hidden, brain_association, index):
         self.name = name
         self.active_high = active_high
         self.auto = auto
@@ -69,8 +72,6 @@ class Relay:
         self.set_auto(self.auto)
         self.hidden = hidden
         self.brain_association = brain_association
-        self.input = intput_pin
-        self.output = output_pin
         self.status = False
         # since its going to be a pain in the ass on frontend even converting bools...
         self.btn_clr_frontend = 'green'
@@ -96,6 +97,7 @@ class STB:
         self.serial_updates = []
         self.settings, self.relays, self.brains = self.__load_stb()
         self.GPIO = self.__gpio_init()
+        self.pcf_read, self.pcf_write = self.__pcf_init()
         self.update_stb()
         self.user = False
         self.extended_relays = False
@@ -108,8 +110,6 @@ class STB:
                 room_name = cfg["Room_name"]
                 relays = cfg["Relays"]
                 brains = cfg["Brains"]
-                pins_IO = cfg["Pins_IO"]
-                master_reset = cfg["Master_reset"]
                 serial_limit = cfg["Serial_line_limit"]
         except ValueError as e:
             print('failure to read config.json')
@@ -131,15 +131,19 @@ class STB:
         cmd_socket = SocketServer(cmd_port)
 
         for i, relay in enumerate(relays):
-            relay_data = relay + pins_IO[i] + [i]
-            relays[i] = Relay(*relay_data)
+            relays[i] = Relay(*(relay + [i]))
 
         for i, brain_data in enumerate(brains):
             brain, reset_pin = brain_data
             brains[i] = Brain(brain, relays, i, reset_pin)
 
-        settings = Settings(room_name, master_reset, serial_limit)
+        settings = Settings(room_name, serial_limit)
         return settings, relays, brains
+
+    def __pcf_init(self):
+        pcf_read = PCF8574(1, 0x38)
+        pcf_write = PCF8574(1, 0x3f)
+        return pcf_read, pcf_write
 
     def __gpio_init(self):
         try:
@@ -155,15 +159,9 @@ class STB:
             print(e)
             print("sth went terribly wrong with GPIO import")
             exit()
-
-        for relay in self.relays:
-            if relay.active_high:
-                pud = GPIO.PUD_DOWN
-            else:
-                pud = GPIO.PUD_UP
-            GPIO.setup(relay.input, GPIO.IN, pull_up_down=pud)
-            GPIO.setup(relay.output, GPIO.OUT)
-
+        # GPIO.cleanup()
+        for brain in self.brains:
+            GPIO.setup(brain.reset_pin, GPIO.OUT, initial=False)
         return GPIO
 
     def set_override(self, relay_index, value, test):
@@ -184,7 +182,7 @@ class STB:
             status = not relay.status
         print("setting relay {} to status {}".format(part_index, status))
         relay.set_status(status)
-        self.GPIO.output(relay.output, relay.status)
+        self.pcf_write.port[relay.index] = relay.status
         self.__log_action("User {} has flipped {} status to {}".format(
             self.user, relay.name, not status, status))
         # takes the cake for the unsexiest variable
@@ -226,6 +224,18 @@ class STB:
         self.user = False
         self.extended_relays = False
 
+    '''
+    # question is if we need to create a seperate thread or handle pausing differently
+    # need to check likely we need to consider flasks limitations
+    def reset_brains(self, brains):
+        for brain in brains:
+            self.GPIO.output(brain.reset_pin, True)
+        
+        sleep(0.5)
+        for brain in brains:
+            self.GPIO.output(brain.reset_pin, False)
+    '''
+
     def __add_serial_lines(self, lines):
         for line in lines:
             # if we have problems with line termination for whatever reason we can edit them here
@@ -236,16 +246,10 @@ class STB:
 
     # reads and updates the STB and sets/mirrors states
     def update_stb(self):
-        print("update_stb")
-        print("adding some random fake updates")
-        
         for relay_no, relay in enumerate(self.relays):
             # auto = true, manual = false
             if relay.auto:
-                new_status = bool(self.GPIO.input(relay.input))
-                # new_status = bool(round(random()))
-                # new_status = False
-
+                new_status = bool(self.pcf_read.port[relay_no])
                 if new_status != relay.status:
                     relay.set_status(new_status)
                     relay_msg = "Relay {} has been switched to {} by the brain ".format(relay.name, relay.status)
@@ -254,7 +258,7 @@ class STB:
                     else:
                         cmd_socket.transmit(relay_msg)
                     self.updates.insert(0, [relay_no, relay.status_frontend, relay.btn_clr_frontend])
-                self.GPIO.output(relay.output, relay.status)
+                self.pcf_write.port[relay_no] = new_status
 
         # self.__add_serial_lines(["counter is at {}".format(counter)])
         ser_lines = serial_socket.read_buffer()

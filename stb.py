@@ -1,13 +1,14 @@
 # Author Martin Pek
 # 2CP - TeamEscape - Engineering
 
-from random import random
+# from random import random
 import json
-from datetime import datetime as dt
+# from datetime import datetime as dt
 from serial_brain.socket_client import SocketClient
 from serial_brain.socketServer import SocketServer
 from pcf8574 import PCF8574
 from time import sleep
+from threading import Thread
 
 # TODO:
 '''
@@ -25,6 +26,17 @@ bool_dict = {"on": True, "off": False}
 serial_socket = None
 cmd_socket = None
 # counter = 0
+
+
+# if the threading here doesnt work move it to app into the updater thread
+def brain_restart_thread(gpio, reset_pins):
+    for reset_pin in reset_pins:
+        gpio.output(reset_pin, True)
+    print("Restarting ...")
+    sleep(0.5)
+    for reset_pin in reset_pins:
+        gpio.output(reset_pin, False)
+    print("Done")
 
 
 class Settings:
@@ -192,7 +204,12 @@ class STB:
         txt = "\n\nroom has been reset by user {}\n\n".format(self.user)
         print(txt)
         cmd_socket.transmit(txt)
-        cmd_socket.transmit("!reset_all")
+
+        pins = []
+        for brain in self.brains:
+            pins.append(brain.reset_pin)
+        thread = Thread(target=brain_restart_thread, args=(self.GPIO, pins,))
+        thread.start()
 
     def log_brain(self, part_index, *_):
         try:

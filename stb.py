@@ -89,6 +89,7 @@ class Relay:
         self.btn_clr_frontend = 'green'
         self.set_status(self.status)
         self.index = index
+        self.auto_default = self.auto
 
 
 class Brain:
@@ -100,6 +101,10 @@ class Brain:
                 associated_relays.append(relay)
         self.associated_relays = associated_relays
         self.reset_pin = reset_pin
+
+    def reset_relay_modes(self):
+        for relay in self.associated_relays:
+            relay.set_auto(relay.auto_default)
 
 
 class STB:
@@ -207,7 +212,14 @@ class STB:
 
         pins = []
         for brain in self.brains:
+            brain.reset_relay_modes()
             pins.append(brain.reset_pin)
+        thread = Thread(target=brain_restart_thread, args=(self.GPIO, pins,))
+        thread.start()
+
+    def restart_brain(self, brain):
+        pins = [brain.reset_pin]
+        brain.reset_relay_modes()
         thread = Thread(target=brain_restart_thread, args=(self.GPIO, pins,))
         thread.start()
 

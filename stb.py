@@ -110,9 +110,9 @@ class STB:
         self.settings, self.relays, self.brains = self.__load_stb()
         self.GPIO = self.__gpio_init()
         self.pcf_read, self.pcf_write = self.__pcf_init()
-        self.update_stb()
         self.user = False
         self.extended_relays = False
+        self.update_stb()
         print("stb init done")
 
     def __load_stb(self):

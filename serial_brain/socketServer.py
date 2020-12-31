@@ -28,7 +28,7 @@ class SocketServer:
         thread.start()
 
     def __manage_sockets(self):
-        print('starting to seek connection on the socket')
+        print('starting to seek clients on the socket server')
         while True:
             client, address = self.sock.accept()
             self.clients.append(client)

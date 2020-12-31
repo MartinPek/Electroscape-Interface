@@ -3,16 +3,25 @@ import json
 from glob import glob
 import serial.rs485
 from time import sleep
+import RPi.GPIO as GPIO     # to control drive/read enable MAX485
+
 
 try:
     with open('serial_config.json') as json_file:
         cfg = json.loads(json_file.read())
         baud = cfg["baud"]
         socket_port = cfg["serial_port"]
+        rs_ctrl_pin = cfg["rs_ctrl_pin"]    # Broadcom pin 26
 except ValueError as e:
     print('failure to read serial_config.json')
     print(e)
     exit()
+
+
+# Pin Setup:
+GPIO.setmode(GPIO.BCM)  # Broadcom pin-numbering scheme
+GPIO.setwarnings(False)
+GPIO.setup(rs_ctrl_pin, GPIO.OUT)   # pin set as output
 
 
 def handle_serial(ser):
@@ -64,10 +73,15 @@ sock = SocketServer(socket_port)
 
 
 def main():
-    while True:
-        ser = connect_serial()
-        handle_serial(ser)
-        # sleep(0.1)
+    print('Activate RS485 (Read only) on Pi')
+    try:
+        GPIO.output(rs_ctrl_pin, GPIO.LOW)
+        while True:
+            ser = connect_serial()
+            handle_serial(ser)
+            # sleep(0.1)
+    finally:
+        GPIO.cleanup()
 
 
 main()

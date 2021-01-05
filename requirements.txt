@@ -7,11 +7,11 @@ Werkzeug==0.16.1
 
 # for the logger
 serial
-glob3
+# glob3
 # socket
 # threading
 
 # RPI
 pcf8574
 # RPi.GPIO
-fakeRPiGPIO
+# fakeRPiGPIO

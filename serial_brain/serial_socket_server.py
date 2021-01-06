@@ -1,3 +1,6 @@
+# Author Martin Pek
+# 2CP - TeamEscape - Engineering
+
 from socketServer import SocketServer
 import json
 from glob import glob

@@ -1,0 +1,33 @@
+.group {
+  display: inline-block;
+  width: 200px;
+}
+.group label, .group input {
+  display: block;
+  font-family: 'open sans';
+  transition: all .23s ease;
+  width: 100%;
+}
+.group label {
+  color: #555;
+  font-size: 15px;
+  font-weight: 600;
+}
+.group input {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  color: #555;
+  font-size: 14px;
+  height: 35px;
+  margin-top: 5px;
+  padding: 0 8px;
+}
+.group input:focus {
+  border-color: #00bbff;
+  box-shadow: 0 0 5px 1px rgba(0,188,255,.25);
+  outline: none;
+}
+label[hidden] {
+  opacity: 0;
+  visibility: hidden;
+}

@@ -4,6 +4,7 @@
     "serial_port": 12345,
     "cmd_port": 12346,
     "arduino_timeout": 8,
+    "rs_ctrl_pin": 26,
 
     "this also doubles as the folder name": "",
     "log_prefix": "testStand",

@@ -1,10 +1,13 @@
+# Author Martin Pek
+# 2CP - TeamEscape - Engineering
+
 import socket
 from time import sleep
 from threading import Thread
 
 
 class SocketClient:
-    def __init__(self, ip, port, timeout=8):
+    def __init__(self, ip, port, timeout=None):
         self.ip = ip
         self.port = port
         self.timeout = timeout

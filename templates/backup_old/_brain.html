@@ -1,0 +1,23 @@
+<div class="brain_restarts">
+
+    <!--  span class="brain_box" -->
+    {{brain.name}}
+    {% for relay in brain.associated_relays %}
+        {{relay.name}}
+    {% endfor %}
+
+    <form method="POST" action="">
+        <button type="submit" class="button" name="restartBrain_0" value="restart {{brain.name}}">RESTART</button>
+    </form>
+
+    <!--
+    <div class="container">
+        <a href="#demo" class="btn btn-primary" data-toggle="collapse">Simple collapsible</a>
+        <div id="demo" class="collapse">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </div>
+    </div>
+    -->
+</div>

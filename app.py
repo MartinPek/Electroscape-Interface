@@ -66,7 +66,9 @@ from threading import Thread, Timer
 from flask_socketio import SocketIO, emit
 from re import split
 from werkzeug.utils import cached_property
+import sys
 
+print("Current python environment is being ran from: {}".format(sys.prefix))
 
 stb = STB()
 app = Flask('STB-Override')

@@ -21,7 +21,8 @@ another issue that existed but got fixed by the provided requirements, pinning t
 https://github.com/jarus/flask-testing/issues/143
 
 ## for development on a PC
-- it will run without GPIOs or emulator
+- The Venv deliberately doesnt contain fakeRPiGPIO since this library is on conflict with the RPi GPIO library.
+    therefore you should install it manually when working on a PC
 
 ## notes
 - checkboxes do submit an empty dict when set on true
@@ -30,3 +31,4 @@ https://github.com/jarus/flask-testing/issues/143
 - FLASK_ENV=development flask run
 - FLASK_ENV=production flask run
 - since browsers do not update stylesheets you may get frustrated till you find the manual reload button combo ctrl-shift-r
+- glob is a standard python library and may only be needed to be installed on RPi, handle manually if needed

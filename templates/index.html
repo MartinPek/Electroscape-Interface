@@ -3,7 +3,7 @@
 
 <style>
     body {
-        background-image: url({{ url_for('static', filename='img/Hintergrund_Standard.jpg') }})
+        background-image: url("{{ url_for('static', filename='img/Hintergrund_Standard.jpg') }}")
     }
 </style>
 
@@ -18,6 +18,7 @@
 
     <!-- JS code to work with socketIO -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <script src="//code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function() {
@@ -53,7 +54,8 @@
                 var newline_cnt = data.lines.length;
                 var old_lines = $('#serial_log').html().split("<br>");
                 old_lines.unshift(data.lines);
-                old_lines.length = Math.min(old_lines.length, {{serial_limit}});
+                //I added single quotes here
+                old_lines.length = Math.min(old_lines.length, '{{ serial_limit }}');
                 document.getElementById("serial_log").innerHTML = old_lines.join("<br/>")
             });
 
@@ -69,23 +71,43 @@
 <!--
 <button class="collapsible" onclick="toggle_collapse">Show Relays</button>
 -->
-<br>
-    <h2>Overrides</h2>
-<br>
 
 <div style="overflow-x:auto;">
     <table class="relays_table" id="relays_table">
         <tr>
-            <th><h3>Relaisname</h3></th>
+            <td>
+                <div class="header_box">
+                    ON
+                </div>
+            </td>
+            <td>
+                <div class="header_box">
+                    {{ room_name }}
+                </div>
+            </td>
+            <td>
+                <form method="POST" action="">
+                    <button type="submit" onclick="return reset_confirm();" class="button" name="reset_room" value="">RESET ROOM</button>
+                </form>
+            
+                <script>
+                    function reset_confirm() {
+                    var ret = confirm("Do you really want Reset the room");
+                    return ret;
+                    }
+                </script>
+            </td>
         </tr>
         <tr>
-            <th><h3>Auto</h3></th>
-            {% for relay in relays %}
-                {% if not relay.hidden or extended_relays %}
-                    {% include '_relay.html' %}
-                {% endif %}
-            {% endfor %}
+            <th scope="col" style="padding: 50px 50px 0px 50px;">Riddle</th>
+            <th scope="col" style="padding: 50px 50px 0px 50px;">Input</th>
+            <th scope="col" style="padding: 50px 50px 0px 50px;">Override</th>
         </tr>
+        {% for relay in relays %}
+            {% if not relay.hidden or extended_relays %}
+                {% include '_relay.html' %}
+            {% endif %} 
+        {% endfor %}
     </table>
 </div>
 

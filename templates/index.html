@@ -76,16 +76,15 @@
 <div style="overflow-x:auto;">
     <table class="relays_table" id="relays_table">
         <tr>
-            <th><h3>Relaisname</h3></th>
+            <th scope="col">Riddle</th>
+            <th scope="col">Input</th>
+            <th scope="col">Override</th>
         </tr>
-        <tr>
-            <th><h3>Auto</h3></th>
-            {% for relay in relays %}
-                {% if not relay.hidden or extended_relays %}
-                    {% include '_relay.html' %}
-                {% endif %}
-            {% endfor %}
-        </tr>
+        {% for relay in relays %}
+            {% if not relay.hidden or extended_relays %}
+                {% include '_relay.html' %}
+            {% endif %} 
+        {% endfor %}
     </table>
 </div>
 

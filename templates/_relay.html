@@ -1,9 +1,22 @@
-<td>
+<tr>
+    <th class="relay_title" scope="row">{{relay.name}}</th>
+</tr>
+<tr>
+    <th scope="row">
+        <div class="relay_status">
+            {{relay.status_frontend}}
+        </div> 
+    </th>
+    <td>
+        <div class="riddle_input">
+            No Input
+        </div> 
+    </td>
 
     <!-- make into a headline/div
-    -->
-    <p>{{relay.name}}</p>
-    <span>
+    
+    <th scope="row">{{relay.name}}</th>
+    <td>
         <form id="switch_override" method="POST" action="">
             <input type="checkbox"
                    id="relay_{{relay.index}}_override"
@@ -13,14 +26,15 @@
                    id="relay_{{relay.index}}_override_hidden"
                    name="relayOverride_{{relay.index}}">
         </form>
-    </span>
+    </td>
+    -->
 
 
     <script>
         // update the checkbox values, who thought mixing a bunch of languages is fun
         var box = document.getElementById("relay_{{relay.index}}_override");
         console.log("value of relay is: " + {{relay.auto_frontend}});
-        box.checked = {{relay.auto_frontend}};
+        //box.checked = {{relay.auto_frontend}};
         console.log(box.checked);
     </script>
 
@@ -37,25 +51,25 @@
         function override_check(form, mode) {
             console.log("override_check")
             console.log("relay mode is: " + mode)
+            form.form.submit();
             if (mode) {
-                alert("Uncheck Auto")
+                //alert("Uncheck Auto")
             } else {
-                form.form.submit();
+                //form.form.submit();
             }
 
         }
         // "this.form.submit();"
     </script>
-    <span>
+    <td>
         <form id="switch_relay" method="POST" action="">
             <button class="status" type="button"
                 style="background-color:{{relay.btn_clr_frontend}}"
                 name="relaySetStatus_{{relay.index}}"
                 onClick="override_check(this, {{relay.auto_frontend}})"
-            >{{relay.status_frontend}}</button>
+            >Override</button>
         <input type="hidden" name="relaySetStatus_{{relay.index}}">
         </form>
-    </span>
+    </td>
 
-
-<td/>
+</tr>

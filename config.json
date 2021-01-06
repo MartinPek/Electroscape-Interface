@@ -1,17 +1,17 @@
 {
-  "Room_name": "3D Drucker",
+  "Room_name": "HH1 Lab - Gallery Stuttgart",
   "Relays are Name, Active High, Auto, Hidden, BrainNo (Physical stuff is Indexed from 1)": "",
   "Relays": [
-    ["Drucker ", true, true, false, 1],
-    ["Lüfter", true, true, false, 1],
-    ["Kamera", true, true, false, 1],
-    ["Licht", true, true, false, 1],
-    ["Extra_1", true, true, true, 1],
-    ["Extra_2", true, true, true, 1],
+    ["Light", true, true, false, 1],
+    ["Fire place", true, true, false, 1],
+    ["Safe", true, true, false, 1],
+    ["UV Light", true, true, false, 1],
+    ["Alarm", true, true, true, 1],
+    ["Exit", true, true, true, 1],
     ["Extra_3", true, true, true, 1],
     ["Extra_4", true, true, true, 1]
 
   ],
   "Brains": [["Keypads", 24], ["Skulpturen", 25], ["Exit", 26], ["Sicherung", 27]],
-  "Serial_line_limit": 50
+  "Serial_line_limit": 80
 }

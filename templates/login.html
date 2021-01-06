@@ -17,9 +17,9 @@
     <div><h2>STB-Pi-Interface {{ room_name }}</h2></div>
     <div>
         <form method="POST" action="">
-            <div>
-                bitte per Kürzel anmelden
-                <input type="text" name="login" value="Username"><br>
+            <div class="group">
+                  <label hidden for="name">Username: </label>
+                  <input type="text" name="login" id="name" placeholder="Enter your username">
             </div>
             <br>
             <label style="font-weight: normal;">
@@ -28,6 +28,21 @@
             </label>
         </form>
     </div>
+    <script type="text/javascript">
+        const inputs = document.querySelectorAll('input[type="text"]');
+
+        [].forEach.call(inputs, input => {
+          const label = document.querySelector(`[for="${input.id}"]`);
+          input.addEventListener('input', function () {
+            if (this.value && this.value.length > 0) {
+              label.removeAttribute('hidden');
+            } else {
+              label.setAttribute('hidden', '');
+            }
+          });
+        });
+    </script>
+
 </body>
 
 </html>

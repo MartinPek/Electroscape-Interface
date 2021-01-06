@@ -13,12 +13,39 @@ body {
     padding: 20px 20px;
 }
 
-table.relays_table {
+.relays_table {
     width: 100%;
     max-width: 900px;
     padding: 0px 15px;
     border-collapse: separate;
 }
+
+.relay_title{
+    font-size: 2em;
+    padding-top: 0.5em;
+    padding-bottom: 0.1em;
+}
+
+.relay_status{
+    background-color: black;
+    color: white;
+    padding: 10px;
+    margin: 10px 50px 10px 10px;
+    text-align: center;
+    border-style: solid;
+    border-color: rgb(201, 76, 76);
+}
+
+.riddle_input{
+    background-color: black;
+    color: white;
+    padding: 10px;
+    margin: 10px 50px 10px 10px;
+    text-align: center;
+    border-style: solid;
+    border-color: #555;
+}
+
 
 td, th {
     border-spacing: 0px 15px;
@@ -106,4 +133,38 @@ span.brain_box {
 input[type="checkbox"] {
     vertical-align: middle;
     padding-left: 15px
+}
+
+.group {
+  display: inline-block;
+  width: 200px;
+}
+.group label, .group input {
+  display: block;
+  font-family: 'open sans';
+  transition: all .23s ease;
+  width: 100%;
+}
+.group label {
+  color: #E6C846;
+  font-size: 25px;
+  font-weight: 600;
+}
+.group input {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  color: #555;
+  font-size: 14px;
+  height: 35px;
+  margin-top: 5px;
+  padding: 0 8px;
+}
+.group input:focus {
+  border-color: #00bbff;
+  box-shadow: 0 0 5px 1px rgba(0,188,255,.25);
+  outline: none;
+}
+label[hidden] {
+  opacity: 0;
+  visibility: hidden;
 }

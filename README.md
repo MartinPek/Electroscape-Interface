@@ -1,4 +1,4 @@
-web_stb_override
+web_stb_override beta
 
 ## installation
 Since flask can defenitely get issues like the latter one 

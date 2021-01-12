@@ -1,4 +1,4 @@
-<div class="topnav">
+<div class="topnav" style="display: table;">
     <span class="left">
         STB-Pi-Interface {{ room_name }}
         {% if extended_relays %}
@@ -25,8 +25,12 @@
     {% else %}
         <span class="right">
             <form id="logout_btn" class="button" method="POST" action="">
-                <button type="submit" name="logout">
-                    logout {{username}}</button>
+                <div class="button-wrapper">
+                    <p>Hello, {{username}}</p>
+                    <button type="submit" name="logout">
+                        logout
+                    </button>
+                </div>
             </form>
         </span>
     {% endif %}

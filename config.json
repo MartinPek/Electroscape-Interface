@@ -1,5 +1,5 @@
 {
-  "Room_name": "HH1 Lab - Gallery Stuttgart",
+  "Room_name": "HH2 Lab - Gallery Stuttgart",
   "Relays are Name, Active High, Auto, Hidden, BrainNo (Physical stuff is Indexed from 1)": "",
   "Relays": [
     ["Light", true, true, false, 1],

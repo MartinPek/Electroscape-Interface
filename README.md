@@ -1,4 +1,4 @@
-web_stb_override
+web_stb_override beta
 
 ## installation
 Since flask can defenitely get issues like the latter one 
@@ -32,3 +32,4 @@ https://github.com/jarus/flask-testing/issues/143
 - FLASK_ENV=production flask run
 - since browsers do not update stylesheets you may get frustrated till you find the manual reload button combo ctrl-shift-r
 - glob is a standard python library and may only be needed to be installed on RPi, handle manually if needed
+

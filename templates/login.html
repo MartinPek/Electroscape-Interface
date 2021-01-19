@@ -3,7 +3,7 @@
 
 <style>
     body {
-        background-image: url("{{ url_for('static', filename='img/Hintergrund_Standard.jpg') }}")
+        background-image: url("{{url_for('static', filename='img/Hintergrund_Standard.jpg')}}")
     }
 </style>
 
@@ -11,7 +11,9 @@
     <meta charset="utf-8"/>
     <title>STB-Pi {{ room_name }}</title>
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/login_css.css') }}" rel="stylesheet">
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <script src="{{url_for('static', filename='js/users.js')}}"></script>
 </head>
 
 <body>
@@ -27,15 +29,10 @@
               </div>
               <input type="submit" value="LOGIN" hidden for="name">
             </div>
-            <!-- Hide checkbox for extend relays for now
-            <label style="font-weight: normal;">
-                <input type="checkbox" name="extend_relays">
-                erweiterte Relais anzeigen
-            </label>
-            -->
         </form>
     </div>
 
+  <!--Hide Login button script -->
   <script type="text/javascript">
       const inputs = document.querySelectorAll('input[type="text"]');
 
@@ -51,6 +48,7 @@
       });
   </script>
 
+  <!--Autocomplete script -->
   <script type="text/javascript">
   function autocomplete(inp, arr) {
     /*the autocomplete function takes two arguments,
@@ -110,7 +108,7 @@
           /*and and make the current item more visible:*/
           addActive(x);
         } else if (e.keyCode == 13) {
-          /*If the ENTER key is pressed, prevent the form from being submitted,*/
+          /*If the ENTER key is pressed, prevent the form from being submitted empty,*/
           e.preventDefault();
           if (currentFocus > -1) {
             /*and simulate a click on the "active" item:*/
@@ -149,22 +147,6 @@
         closeAllLists(e.target);
     });
   }
-
-  var users = [
-    "Abdullah",
-    "Admin",
-    "Björn",
-    "Chris",
-    "Christoph",
-    "Felix",
-    "Germany",
-    "Hamburg",
-    "Lewis",
-    "Martin",
-    "Philip",
-    "Sonja",
-    "Stuttgart",
-    "Susanne"];
 
   /*initiate the autocomplete function on the "name" element, and pass along the users array as possible autocomplete values:*/
   autocomplete(document.getElementById("name"), users);

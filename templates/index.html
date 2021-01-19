@@ -51,13 +51,29 @@
                 if (cb)
                     cb();
             });
-
+            
+            function parse_line(lines){
+                var all_lines = lines.split("\n")
+                for (let index = 0; index < all_lines.length; index++) {
+                    var line = all_lines[index];
+                    document.getElementById("TestHere1").innerHTML = line
+                    var arr = line.split(",");
+                    if (arr.length == 4 && arr[0].startsWith('!') && arr[arr.length-1] == "Done."){
+                        document.getElementById("TestHere2").innerHTML = arr[1]
+                        document.getElementById("TestHere3").innerHTML = arr[2]
+                    }else{
+                        document.getElementById("TestHere2").innerHTML = arr.length
+                        document.getElementById("TestHere3").innerHTML = "Different?"
+                    }
+                    
+                }
+            }
             socket.on('serial_update', function(data) {
-                console.log("received serial lines: ");
+                console.log("received serial lines: "+ data.lines.toString());
                 var newline_cnt = data.lines.length;
+                parse_line(data.lines.toString());
                 var old_lines = $('#serial_log').html().split("<br>");
                 old_lines.unshift(data.lines);
-                //I added single quotes here
                 old_lines.length = Math.min(old_lines.length, '{{ serial_limit }}');
                 document.getElementById("serial_log").innerHTML = old_lines.join("<br/>")
             });
@@ -89,6 +105,11 @@
 
 <div style="overflow-x:auto;">
     <table class="relays_table" id="relays_table">
+        <colgroup>
+            <col span="1" style="width: 25%;">
+            <col span="1" style="width: 50%;">
+            <col span="1" style="width: 25%;">
+         </colgroup>
         <tr>
             <td>
                 <div class="header_box">
@@ -119,21 +140,44 @@
             <th scope="col" style="padding: 50px 50px 0px 50px;">Override</th>
         </tr>
         {% for relay in relays %}
-            {% if not relay.hidden or extended_relays %}
+            {% if not relay.hidden or username.lower() == "admin" %}
                 {% include '_relay.html' %}
             {% endif %} 
         {% endfor %}
-    </table>
+        </table>
 </div>
 
 <br>
 <br>
-
 <br>
     <h2>Brain activity</h2>
 <br>
 <div id="serial_log" class="log"></div>
+<br>
+    <h2>Debug: </h2>
+<br>
+<table>
+    <colgroup>
+        <col span="1" style="width: 25%;">
+        <col span="1" style="width: 50%;">
+        <col span="1" style="width: 25%;">
+     </colgroup>
+    <tr>
+        <th scope="col">Line:</th>
+        <th scope="col">Msg</th>
+        <th scope="col">Comment</th>
+    </tr>
+    <tr>
+        <td id="TestHere1" class="ON_Box" scope="row">ok</td>
+        <td id="TestHere2" class="ON_Box" scope="row">ok</td>
+        <td id="TestHere3" class="ON_Box" scope="row">ok</td>
+    </tr>
+</table>
+<div id="debug_log" class="log" >This is the debug_log</div>
 
+
+{% if 1 == 2 %}
+<!-- Strong comment
 <br>
 <br>
 
@@ -150,7 +194,6 @@
         }
     </script>
 
-    <!-- comments aren't strong enough apparently, the joy of webdeving -->
     <script>/*
     <br><h2>Brain Restarts</h2>
     {% for brain in brains %}
@@ -158,14 +201,7 @@
     {% endfor %}
     */</script>
 </div>
-
-<br>
-<br>
-    <h2>Debug: </h2>
-<br>
-<br>
-<div id="debug_log" class="log" >This is the debug_log</div>
-
-
+-->
+{% endif %}
 </body>
 </html>

@@ -9,4 +9,5 @@ __pycache__/
 
 templates/backup_old/*
 
+GPIOEmulator/*
 

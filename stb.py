@@ -126,7 +126,7 @@ class STB:
         self.GPIO = self.__gpio_init()
         self.pcf_read, self.pcf_write = self.__pcf_init()
         self.user = False
-        self.extended_relays = False
+        self.admin_mode = False
         self.update_stb()
         print("stb init done")
 
@@ -176,17 +176,18 @@ class STB:
         try:
             import RPi.GPIO as GPIO
             print("Running on RPi")
-            GPIO.setmode(GPIO.BCM)
         except (RuntimeError, ModuleNotFoundError):
             print("Running without GPIOs on non Pi ENV / non RPi.GPIO installed machine")
             self.settings.is_rpi_env = False
-            from fakeRPiGPIO import GPIO
-            GPIO.VERBOSE = False
+            # from fakeRPiGPIO import GPIO
+            # GPIO.VERBOSE = False
+            from GPIOEmulator.EmulatorGUI import GPIO
         except OSError as e:
             print(e)
             print("sth went terribly wrong with GPIO import")
             exit()
-        # GPIO.cleanup()
+
+        GPIO.setmode(GPIO.BCM)
         for brain in self.brains:
             GPIO.setup(brain.reset_pin, GPIO.OUT, initial=False)
         return GPIO
@@ -210,7 +211,7 @@ class STB:
         print("setting relay {} to status {}".format(part_index, status))
         relay.set_status(status)
         self.pcf_write.port[relay.index] = relay.status
-        self.__log_action("User {} has flipped {} status to {}".format(
+        self.__log_action("User {} has flipped {} status {} to {}".format(
             self.user, relay.name, not status, status))
         # takes the cake for the unsexiest variable
         cmd_socket.transmit("!log: {}".format(self.brains[relay.brain_association].name))
@@ -255,13 +256,13 @@ class STB:
         self.__add_serial_lines([message])
         cmd_socket.transmit(message)
 
-    def extend_relays(self, *_):
-        self.extended_relays = True
+    def set_admin_mode(self, *_):
+        self.admin_mode = True
 
     def logout(self, *_):
-        cmd_socket.transmit("!logout: ".format(self.user))
+        cmd_socket.transmit("!logout: {} ".format(self.user))
         self.user = False
-        self.extended_relays = False
+        self.admin_mode = False
 
     '''
     # question is if we need to create a seperate thread or handle pausing differently
@@ -292,7 +293,7 @@ class STB:
                 if new_status != relay.status:
                     relay.set_status(new_status)
                     relay_msg = "Relay {} has been switched to {} by the brain ".format(relay.name, relay.status)
-                    if self.extended_relays or not relay.hidden:
+                    if self.admin_mode or not relay.hidden:
                         self.__log_action(relay_msg)
                     else:
                         cmd_socket.transmit(relay_msg)

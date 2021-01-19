@@ -133,6 +133,8 @@ def index():
     if stb_thread is None:
         stb_thread = socketio.start_background_task(updater)
 
+    socketio.start_background_task(heartbeat_pulse)
+
     if request.method == 'POST':
         print("post returned: {}".format(request.form))
         interpreter(request.form)
@@ -163,6 +165,12 @@ def updater():
             socketio.sleep(0.1)
     finally:
         stb.cleanup()
+
+
+def heartbeat_pulse():
+    while True:
+        socketio.emit('heartbeat_pulse', namespace='/test')
+        socketio.sleep(1)
 
 
 def main():

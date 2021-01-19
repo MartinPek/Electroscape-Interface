@@ -21,6 +21,9 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <script src="//code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
+
+        var heartbeat_timeout = 0;
+
         $(document).ready(function() {
             // Use a "/test" namespace.
             // An application can open a connection on multiple namespaces, and
@@ -59,6 +62,18 @@
                 document.getElementById("serial_log").innerHTML = old_lines.join("<br/>")
             });
 
+            socket.on('heartbeat_pulse', function(data) {
+                // console.log('heartbeat rcvd')
+                heartbeat_timeout = 0;
+            });
+
+            setInterval(function() {
+                if (heartbeat_timeout > 5) {
+                    window.location.replace('https://developer.mozilla.org/en-US/docs/Web/API/Location.reload');
+                } else {
+                    heartbeat_timeout++;
+                }
+            }, 1000);
         });
     </script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>

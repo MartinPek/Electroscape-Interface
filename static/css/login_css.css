@@ -1,11 +1,12 @@
 .group {
   display: flex;
   align-items: center;
-  width: 60%;
+  width: 50%;
 }
 
 .group input[type="submit"] {
-width: 25%;
+  width: 25%;
+  margin-inline: 10px 0px;
 }
 
 #name {
@@ -41,11 +42,16 @@ input[type="submit"]:hover{
   background-color: transparent;
 }
 
+input[type="submit"][disabled]{
+  background-color: #555;
+  border-color: red;
+}
+
 .autocomplete {
   /*the container must be positioned relative:*/
   position: relative;
   display: inline-block;
-  margin-inline: 20px;
+  margin: 10px 50px 10px 10px;
 }
 
 .autocomplete-items {

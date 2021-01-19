@@ -14,20 +14,39 @@
     <link href="{{ url_for('static', filename='css/login_css.css') }}" rel="stylesheet">
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <script src="{{url_for('static', filename='js/users.js')}}"></script>
+    <script src="{{url_for('static', filename='js/blacklist.js')}}"></script>
+    <script type="text/javascript">
+      function blacklist_check(){
+       const lbl_name = document.getElementById("name");
+       const btn = document.getElementById("btn_login");
+       var username = lbl_name.value;
+       var result = blacklist.filter(user => user.toUpperCase() == username.toUpperCase());
+       console.log(result);
+       if (result.length){
+          btn.value = 'NO USER FOUND';
+          lbl_name.style.borderColor = "red";
+          btn.disabled = "disabled";
+          return false;
+       }else{
+          document.getElementById("name").style.borderColor = 'green';
+          return true;
+       }
+     };
+</script>
 </head>
 
 <body>
     <div><h2>STB-Pi-Interface {{ room_name }}</h2></div>
-    <div>
-        <form autocomplete="off" method="POST" action="">
+    <div style="margin: 50px;">
+        <form autocomplete="off" method="POST" action="" onsubmit="return blacklist_check();">
             <div class="flex-contianter group">
-              <div class="ON_Box">
+              <div class="ON_Box" style="flex: 1;">
                 ON
               </div>
-              <div class="autocomplete" style="width:400px;">
+              <div class="autocomplete" style="width:400px;flex: 5;">
                 <input type="text" name="login" id="name" placeholder="Enter your username">
               </div>
-              <input type="submit" value="LOGIN" hidden for="name">
+              <input type="submit" value="LOGIN" hidden for="name" id="btn_login">
             </div>
         </form>
     </div>
@@ -35,12 +54,16 @@
   <!--Hide Login button script -->
   <script type="text/javascript">
       const inputs = document.querySelectorAll('input[type="text"]');
+      const lbl_name = document.getElementById("name");
 
       [].forEach.call(inputs, input => {
         const label = document.querySelector(`[for="${input.id}"]`);
         input.addEventListener('input', function () {
           if (this.value && this.value.length > 0) {
             label.removeAttribute('hidden');
+            label.removeAttribute('disabled');
+            lbl_name.style.borderColor = "#555";
+            label.value = 'LOGIN'
           } else {
             label.setAttribute('hidden', '');
           }
@@ -147,9 +170,10 @@
         closeAllLists(e.target);
     });
   }
-
+  
   /*initiate the autocomplete function on the "name" element, and pass along the users array as possible autocomplete values:*/
   autocomplete(document.getElementById("name"), users);
+
   </script>
 
 </body>

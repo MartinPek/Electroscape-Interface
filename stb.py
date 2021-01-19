@@ -13,6 +13,16 @@ from threading import Thread
 # TODO:
 '''
 log receiving relay actions aswell
+- Except PCF with not for an override
+    raise IOError(ffi.errno)
+    OSError: 121
+    its caused by disconnected or malfunctioning PCF hardware -> 
+    link to instructions to ???
+- self.sock.bind(("127.0.0.1", port))
+    OSError: [Errno 98]
+    Address already in use
+    either with reset protocol or socket shutdown when script is turned off/crashes
+    or timeout?
 '''
 
 rpi_env = True

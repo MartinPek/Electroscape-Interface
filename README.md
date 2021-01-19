@@ -1,3 +1,4 @@
+README
 web_stb_override beta
 
 ## installation

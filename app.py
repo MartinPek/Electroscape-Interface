@@ -97,7 +97,7 @@ def interpreter(immuteable):
         "relaySetStatus": stb.set_relay,
         "reset_room": stb.restart_all_brains,
         "login": stb.login,
-        "extend_relays": stb.extend_relays,
+        "extend_relays": stb.admin_mode,
         "logout": stb.logout
     }
 
@@ -145,7 +145,7 @@ def index():
     relays = stb.relays
     return render_template('index.html', brains=brains, room_name=room_name, relays=relays,
                            async_mode=socketio.async_mode, username=stb.user,
-                           extended_relays=stb.extended_relays, serial_limit=stb.settings.serial_limit)
+                           extended_relays=stb.admin_mode, serial_limit=stb.settings.serial_limit)
 
 
 def updater():

@@ -39,7 +39,7 @@ def handle_serial(ser):
 
 def read_serial(ser):
     try:
-        line = str(ser.readline())  #[2:][:-5]
+        line = str(ser.readline())[2:][:-5]
         # line = line.decode()
         print(line)
         return line

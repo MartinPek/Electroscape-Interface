@@ -8,28 +8,16 @@
         </div> 
     </th>
     <td>
-        <div class="riddle_input">
+        <div class="riddle_input" id="relay_{{relay.name}}">
             No Input
         </div> 
     </td>
-
-    <!-- make into a headline/div
-    
-    <th scope="row">{{relay.name}}</th>
     <td>
-        <form id="switch_override" method="POST" action="">
-            <input type="checkbox"
-                   id="relay_{{relay.index}}_override"
-                   name="relayOverride_{{relay.index}}"
-                   onClick="this.form.submit();">
-            <input type="hidden"
-                   id="relay_{{relay.index}}_override_hidden"
-                   name="relayOverride_{{relay.index}}">
-        </form>
+        <button class="btn_override"
+            id="btn_override_{{relay.name}}"
+            onClick="override_relay('{{relay}}', 'click')"
+        >Override</button>
     </td>
-    -->
-
-
     <script>
         // update the checkbox values, who thought mixing a bunch of languages is fun
         var box = document.getElementById("relay_{{relay.index}}_override");
@@ -59,17 +47,5 @@
             }
 
         }
-        // "this.form.submit();"
     </script>
-    <td>
-        <form id="switch_relay" method="POST" action="">
-            <button class="status" type="button"
-                style="background-color:'{{relay.btn_clr_frontend}}'"
-                name="relaySetStatus_{{relay.index}}"
-                onClick="override_check(this, '{{relay.auto_frontend}}')"
-            >Override</button>
-        <input type="hidden" name="relaySetStatus_{{relay.index}}">
-        </form>
-    </td>
-
 </tr>
